@@ -78,34 +78,54 @@ class RecipeCard extends HookConsumerWidget {
                   Positioned(
                     top: 12,
                     right: 12,
-                    child: GestureDetector(
-                      onTap: () async {
-                        await ref
-                            .read(favoriteRecipesProvider.notifier)
-                            .toggleFavorite(recipe);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.9),
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 8,
+                    child: Consumer(
+                      builder: (context, watch, child) {
+                        final isFavoriteAsync = ref.watch(recipeFavoriteStatusProvider(recipe.id));
+                        return GestureDetector(
+                          onTap: () async {
+                            await ref
+                                .read(favoriteRecipesProvider.notifier)
+                                .toggleFavorite(recipe);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.9),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 8,
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        child: Icon(
-                          recipe.isFavorite
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          color: recipe.isFavorite
-                              ? const Color(0xFFFF6B6B)
-                              : const Color(0xFF8D6E63),
-                          size: 20,
-                        ),
-                      ),
+                            child: isFavoriteAsync.when(
+                              data: (isFavorite) => Icon(
+                                isFavorite ? Icons.favorite : Icons.favorite_border,
+                                color: isFavorite
+                                    ? const Color(0xFFFF6B6B)
+                                    : const Color(0xFF8D6E63),
+                                size: 20,
+                              ),
+                              loading: () => const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8D6E63)),
+                                ),
+                              ),
+                              error: (error, stack) => Icon(
+                                recipe.isFavorite ? Icons.favorite : Icons.favorite_border,
+                                color: recipe.isFavorite
+                                    ? const Color(0xFFFF6B6B)
+                                    : const Color(0xFF8D6E63),
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                   // カテゴリタグ

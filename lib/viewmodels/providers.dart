@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../database/database.dart';
 import '../repositories/recipe_repository.dart';
@@ -73,7 +72,7 @@ class FavoriteRecipes extends _$FavoriteRecipes {
 
   Future<void> toggleFavorite(Recipe recipe) async {
     final repository = ref.read(recipeRepositoryProvider);
-    
+
     if (recipe.isFavorite) {
       await repository.removeFromFavorites(recipe.id);
     } else {
@@ -82,7 +81,10 @@ class FavoriteRecipes extends _$FavoriteRecipes {
 
     // レシピリストを更新
     ref.invalidate(recipeListProvider);
-    
+
+    // お気に入り状態プロバイダーを更新
+    ref.invalidate(recipeFavoriteStatusProvider(recipe.id));
+
     // お気に入りリストを更新
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
@@ -128,17 +130,35 @@ class MonthlyRecipes extends _$MonthlyRecipes {
   Future<Map<DateTime, Recipe>> build(int year, int month) async {
     final repository = ref.watch(recipeRepositoryProvider);
     final allRecipes = await repository.getAllRecipes();
-    
+
     final Map<DateTime, Recipe> monthlyRecipes = {};
     final daysInMonth = DateTime(year, month + 1, 0).day;
-    
+
     for (int day = 1; day <= daysInMonth; day++) {
       final date = DateTime(year, month, day);
       // ランダムにレシピを割り当て（日付をシードに使用して一貫性を保つ）
       final index = (date.year * 10000 + date.month * 100 + date.day) % allRecipes.length;
       monthlyRecipes[date] = allRecipes[index];
     }
-    
+
     return monthlyRecipes;
+  }
+}
+
+// 特定レシピのお気に入り状態プロバイダー
+@riverpod
+class RecipeFavoriteStatus extends _$RecipeFavoriteStatus {
+  @override
+  Future<bool> build(String recipeId) async {
+    final repository = ref.watch(recipeRepositoryProvider);
+    return await repository.isFavorite(recipeId);
+  }
+
+  Future<void> refresh() async {
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() async {
+      final repository = ref.read(recipeRepositoryProvider);
+      return await repository.isFavorite(recipeId);
+    });
   }
 }

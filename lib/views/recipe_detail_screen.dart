@@ -38,28 +38,60 @@ class RecipeDetailScreen extends HookConsumerWidget {
               ),
             ),
             actions: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.9),
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    icon: Icon(
-                      recipe.isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: recipe.isFavorite
-                          ? const Color(0xFFFF6B6B)
-                          : const Color(0xFF6D4C41),
+              Consumer(
+                builder: (context, watch, child) {
+                  final isFavoriteAsync = ref.watch(recipeFavoriteStatusProvider(recipe.id));
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.9),
+                        shape: BoxShape.circle,
+                      ),
+                      child: isFavoriteAsync.when(
+                        data: (isFavorite) => IconButton(
+                          icon: Icon(
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            color: isFavorite
+                                ? const Color(0xFFFF6B6B)
+                                : const Color(0xFF6D4C41),
+                          ),
+                          onPressed: () async {
+                            await ref
+                                .read(favoriteRecipesProvider.notifier)
+                                .toggleFavorite(recipe);
+                            ref.invalidate(recipeListProvider);
+                          },
+                        ),
+                        loading: () => const Padding(
+                          padding: EdgeInsets.all(12.0),
+                          child: SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF6D4C41)),
+                            ),
+                          ),
+                        ),
+                        error: (error, stack) => IconButton(
+                          icon: Icon(
+                            recipe.isFavorite ? Icons.favorite : Icons.favorite_border,
+                            color: recipe.isFavorite
+                                ? const Color(0xFFFF6B6B)
+                                : const Color(0xFF6D4C41),
+                          ),
+                          onPressed: () async {
+                            await ref
+                                .read(favoriteRecipesProvider.notifier)
+                                .toggleFavorite(recipe);
+                            ref.invalidate(recipeListProvider);
+                          },
+                        ),
+                      ),
                     ),
-                    onPressed: () async {
-                      await ref
-                          .read(favoriteRecipesProvider.notifier)
-                          .toggleFavorite(recipe);
-                      ref.invalidate(recipeListProvider);
-                    },
-                  ),
-                ),
+                  );
+                },
               ),
             ],
             flexibleSpace: FlexibleSpaceBar(

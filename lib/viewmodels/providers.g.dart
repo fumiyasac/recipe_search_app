@@ -254,7 +254,7 @@ final class FavoriteRecipesProvider
   FavoriteRecipes create() => FavoriteRecipes();
 }
 
-String _$favoriteRecipesHash() => r'cfc0f17848786dfa4ec80a6ff806c08087c59647';
+String _$favoriteRecipesHash() => r'eaecbb34787dd2f4bef7261e4fe5ee57c28b4441';
 
 abstract class _$FavoriteRecipes extends $AsyncNotifier<List<Recipe>> {
   FutureOr<List<Recipe>> build();
@@ -469,5 +469,95 @@ abstract class _$MonthlyRecipes extends $AsyncNotifier<Map<DateTime, Recipe>> {
               Object?
             >;
     element.handleCreate(ref, () => build(_$args.$1, _$args.$2));
+  }
+}
+
+@ProviderFor(RecipeFavoriteStatus)
+final recipeFavoriteStatusProvider = RecipeFavoriteStatusFamily._();
+
+final class RecipeFavoriteStatusProvider
+    extends $AsyncNotifierProvider<RecipeFavoriteStatus, bool> {
+  RecipeFavoriteStatusProvider._({
+    required RecipeFavoriteStatusFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'recipeFavoriteStatusProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$recipeFavoriteStatusHash();
+
+  @override
+  String toString() {
+    return r'recipeFavoriteStatusProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  RecipeFavoriteStatus create() => RecipeFavoriteStatus();
+
+  @override
+  bool operator ==(Object other) {
+    return other is RecipeFavoriteStatusProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$recipeFavoriteStatusHash() =>
+    r'b7d1ab8bdbc91ff0d31147112287c8155109e8ca';
+
+final class RecipeFavoriteStatusFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          RecipeFavoriteStatus,
+          AsyncValue<bool>,
+          bool,
+          FutureOr<bool>,
+          String
+        > {
+  RecipeFavoriteStatusFamily._()
+    : super(
+        retry: null,
+        name: r'recipeFavoriteStatusProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  RecipeFavoriteStatusProvider call(String recipeId) =>
+      RecipeFavoriteStatusProvider._(argument: recipeId, from: this);
+
+  @override
+  String toString() => r'recipeFavoriteStatusProvider';
+}
+
+abstract class _$RecipeFavoriteStatus extends $AsyncNotifier<bool> {
+  late final _$args = ref.$arg as String;
+  String get recipeId => _$args;
+
+  FutureOr<bool> build(String recipeId);
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<AsyncValue<bool>, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<bool>, bool>,
+              AsyncValue<bool>,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, () => build(_$args));
   }
 }

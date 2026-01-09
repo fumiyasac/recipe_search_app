@@ -26,11 +26,11 @@ class RecipeCard extends HookConsumerWidget {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 12,
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 20,
               offset: const Offset(0, 4),
             ),
           ],
@@ -49,28 +49,12 @@ class RecipeCard extends HookConsumerWidget {
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(20),
+                          top: Radius.circular(16),
                         ),
                         image: DecorationImage(
                           image: NetworkImage(recipe.imageUrl),
                           fit: BoxFit.cover,
                         ),
-                      ),
-                    ),
-                  ),
-                  // グラデーションオーバーレイ
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(20),
-                      ),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black.withOpacity(0.3),
-                        ],
                       ),
                     ),
                   ),
@@ -90,12 +74,13 @@ class RecipeCard extends HookConsumerWidget {
                           child: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.9),
+                              color: Colors.white,
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 8,
+                                  color: Colors.black.withOpacity(0.15),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 2),
                                 ),
                               ],
                             ),
@@ -103,8 +88,8 @@ class RecipeCard extends HookConsumerWidget {
                               data: (isFavorite) => Icon(
                                 isFavorite ? Icons.favorite : Icons.favorite_border,
                                 color: isFavorite
-                                    ? const Color(0xFFFF6B6B)
-                                    : const Color(0xFF8D6E63),
+                                    ? const Color(0xFFFF6B35)
+                                    : const Color(0xFF6A6A6A),
                                 size: 20,
                               ),
                               loading: () => const SizedBox(
@@ -112,14 +97,14 @@ class RecipeCard extends HookConsumerWidget {
                                 height: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF8D6E63)),
+                                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF6B35)),
                                 ),
                               ),
                               error: (error, stack) => Icon(
                                 recipe.isFavorite ? Icons.favorite : Icons.favorite_border,
                                 color: recipe.isFavorite
-                                    ? const Color(0xFFFF6B6B)
-                                    : const Color(0xFF8D6E63),
+                                    ? const Color(0xFFFF6B35)
+                                    : const Color(0xFF6A6A6A),
                                 size: 20,
                               ),
                             ),
@@ -134,20 +119,27 @@ class RecipeCard extends HookConsumerWidget {
                     left: 12,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
+                        horizontal: 14,
+                        vertical: 7,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFF9E80).withOpacity(0.95),
-                        borderRadius: BorderRadius.circular(20),
+                        color: const Color(0xFFFF6B35),
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFFFF6B35).withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
                       child: Text(
                         recipe.category,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.3,
                         ),
                       ),
                     ),
@@ -169,23 +161,23 @@ class RecipeCard extends HookConsumerWidget {
                       recipe.title,
                       style: const TextStyle(
                         fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF6D4C41),
-                        fontFamily: 'Poppins',
-                        height: 1.2,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF1A1A1A),
+                        height: 1.3,
+                        letterSpacing: -0.2,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
                     // 説明文
                     Text(
                       recipe.description,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: const Color(0xFF8D6E63).withOpacity(0.8),
-                        fontFamily: 'Poppins',
-                        height: 1.3,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFF6A6A6A),
+                        height: 1.4,
+                        letterSpacing: 0,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -196,43 +188,53 @@ class RecipeCard extends HookConsumerWidget {
                       children: [
                         // 調理時間
                         Icon(
-                          Icons.schedule,
-                          size: 14,
-                          color: const Color(0xFFFF9E80).withOpacity(0.8),
+                          Icons.schedule_outlined,
+                          size: 15,
+                          color: const Color(0xFF6A6A6A),
                         ),
                         const SizedBox(width: 4),
                         Text(
                           '${recipe.totalTime}分',
                           style: const TextStyle(
                             fontSize: 11,
-                            color: Color(0xFF8D6E63),
-                            fontFamily: 'Poppins',
+                            color: Color(0xFF6A6A6A),
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         const SizedBox(width: 12),
                         // 評価
                         Icon(
                           Icons.star,
-                          size: 14,
-                          color: const Color(0xFFFFB74D).withOpacity(0.9),
+                          size: 15,
+                          color: const Color(0xFFF7931E),
                         ),
                         const SizedBox(width: 4),
                         Text(
                           recipe.rating.toString(),
                           style: const TextStyle(
                             fontSize: 11,
-                            color: Color(0xFF8D6E63),
-                            fontFamily: 'Poppins',
+                            color: Color(0xFF6A6A6A),
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         const Spacer(),
                         // カロリー
-                        Text(
-                          '${recipe.calories}kcal',
-                          style: TextStyle(
-                            fontSize: 10,
-                            color: const Color(0xFF8D6E63).withOpacity(0.7),
-                            fontFamily: 'Poppins',
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF8F9FA),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            '${recipe.calories}kcal',
+                            style: const TextStyle(
+                              fontSize: 10,
+                              color: Color(0xFF4A4A4A),
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ],

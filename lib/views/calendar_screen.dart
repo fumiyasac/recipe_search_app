@@ -23,23 +23,36 @@ class CalendarScreen extends HookConsumerWidget {
           children: [
             Icon(
               Icons.calendar_month,
-              color: Color(0xFFFF9E80),
+              color: Color(0xFFFF6B35),
               size: 28,
             ),
             SizedBox(width: 12),
-            Text('今月の献立'),
+            Text(
+              '今月の献立',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF1A1A1A),
+                letterSpacing: -0.5,
+              ),
+            ),
           ],
         ),
         leading: IconButton(
           icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: const Color(0xFFFF9E80).withOpacity(0.1),
+              color: Colors.white,
               shape: BoxShape.circle,
+              border: Border.all(
+                color: const Color(0xFFE0E0E0),
+                width: 1,
+              ),
             ),
             child: const Icon(
               Icons.arrow_back,
-              color: Color(0xFF6D4C41),
+              color: Color(0xFF1A1A1A),
+              size: 20,
             ),
           ),
           onPressed: () => Navigator.pop(context),
@@ -55,14 +68,11 @@ class CalendarScreen extends HookConsumerWidget {
                   margin: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: const Color(0xFFE0E0E0),
+                      width: 1,
+                    ),
                   ),
                   child: TableCalendar(
                     firstDay: DateTime.utc(2020, 1, 1),
@@ -78,66 +88,61 @@ class CalendarScreen extends HookConsumerWidget {
                       focusedDay.value = focused;
                     },
                     calendarFormat: CalendarFormat.month,
-                    headerStyle: HeaderStyle(
+                    headerStyle: const HeaderStyle(
                       formatButtonVisible: false,
                       titleCentered: true,
-                      titleTextStyle: const TextStyle(
+                      titleTextStyle: TextStyle(
                         fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF6D4C41),
-                        fontFamily: 'Playfair',
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF1A1A1A),
+                        letterSpacing: -0.5,
                       ),
                       leftChevronIcon: Icon(
                         Icons.chevron_left,
-                        color: const Color(0xFFFF9E80),
+                        color: Color(0xFF1A1A1A),
                       ),
                       rightChevronIcon: Icon(
                         Icons.chevron_right,
-                        color: const Color(0xFFFF9E80),
+                        color: Color(0xFF1A1A1A),
                       ),
                     ),
                     calendarStyle: CalendarStyle(
                       todayDecoration: BoxDecoration(
-                        color: const Color(0xFFFFB74D).withOpacity(0.3),
+                        color: const Color(0xFFFF6B35).withOpacity(0.15),
                         shape: BoxShape.circle,
                       ),
                       selectedDecoration: const BoxDecoration(
-                        color: Color(0xFFFF9E80),
+                        color: Color(0xFFFF6B35),
                         shape: BoxShape.circle,
                       ),
                       defaultTextStyle: const TextStyle(
-                        color: Color(0xFF6D4C41),
-                        fontFamily: 'Poppins',
+                        color: Color(0xFF1A1A1A),
+                        fontWeight: FontWeight.w500,
                       ),
                       weekendTextStyle: const TextStyle(
-                        color: Color(0xFFFF6B6B),
-                        fontFamily: 'Poppins',
+                        color: Color(0xFFFF6B35),
+                        fontWeight: FontWeight.w500,
                       ),
                       outsideTextStyle: TextStyle(
-                        color: const Color(0xFF8D6E63).withOpacity(0.3),
-                        fontFamily: 'Poppins',
+                        color: const Color(0xFF6A6A6A).withOpacity(0.3),
                       ),
                       todayTextStyle: const TextStyle(
-                        color: Color(0xFF6D4C41),
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Poppins',
+                        color: Color(0xFF1A1A1A),
+                        fontWeight: FontWeight.w700,
                       ),
                       selectedTextStyle: const TextStyle(
                         color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                    daysOfWeekStyle: DaysOfWeekStyle(
+                    daysOfWeekStyle: const DaysOfWeekStyle(
                       weekdayStyle: TextStyle(
-                        color: const Color(0xFF8D6E63).withOpacity(0.7),
+                        color: Color(0xFF6A6A6A),
                         fontWeight: FontWeight.w600,
-                        fontFamily: 'Poppins',
                       ),
                       weekendStyle: TextStyle(
-                        color: const Color(0xFFFF6B6B).withOpacity(0.7),
+                        color: Color(0xFFFF6B35),
                         fontWeight: FontWeight.w600,
-                        fontFamily: 'Poppins',
                       ),
                     ),
                   ),
@@ -159,9 +164,9 @@ class CalendarScreen extends HookConsumerWidget {
                           '${selectedDay.value.month}月${selectedDay.value.day}日の献立',
                           style: const TextStyle(
                             fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF6D4C41),
-                            fontFamily: 'Playfair',
+                            fontWeight: FontWeight.w800,
+                            color: Color(0xFF1A1A1A),
+                            letterSpacing: -0.5,
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -190,9 +195,9 @@ class CalendarScreen extends HookConsumerWidget {
                         '今月の献立一覧',
                         style: TextStyle(
                           fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF6D4C41),
-                          fontFamily: 'Playfair',
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF1A1A1A),
+                          letterSpacing: -0.5,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -226,7 +231,7 @@ class CalendarScreen extends HookConsumerWidget {
           child: Padding(
             padding: EdgeInsets.all(40),
             child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF9E80)),
+              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF6B35)),
             ),
           ),
         ),
@@ -239,15 +244,15 @@ class CalendarScreen extends HookConsumerWidget {
                 Icon(
                   Icons.error_outline,
                   size: 64,
-                  color: const Color(0xFF8D6E63).withOpacity(0.3),
+                  color: const Color(0xFF6A6A6A).withOpacity(0.3),
                 ),
                 const SizedBox(height: 16),
-                Text(
+                const Text(
                   'エラーが発生しました',
                   style: TextStyle(
                     fontSize: 16,
-                    color: const Color(0xFF8D6E63).withOpacity(0.7),
-                    fontFamily: 'Poppins',
+                    color: Color(0xFF6A6A6A),
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ],
@@ -271,113 +276,106 @@ class CalendarScreen extends HookConsumerWidget {
       child: Container(
         height: 200,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.08),
-              blurRadius: 16,
+              blurRadius: 20,
               offset: const Offset(0, 4),
             ),
           ],
         ),
-        child: Stack(
+        child: Row(
           children: [
             // 背景画像
             ClipRRect(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: const BorderRadius.horizontal(
+                left: Radius.circular(16),
+              ),
               child: Image.network(
                 recipe.imageUrl,
-                width: double.infinity,
+                width: 160,
                 height: double.infinity,
                 fit: BoxFit.cover,
               ),
             ),
-            // グラデーション
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Colors.black.withOpacity(0.7),
+            // 情報
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFF6B35),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        recipe.category,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      recipe.title,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF1A1A1A),
+                        letterSpacing: -0.3,
+                        height: 1.3,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const Spacer(),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.schedule_outlined,
+                          size: 16,
+                          color: Color(0xFF6A6A6A),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${recipe.totalTime}分',
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: Color(0xFF6A6A6A),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        const Icon(
+                          Icons.star,
+                          size: 16,
+                          color: Color(0xFFF7931E),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          recipe.rating.toString(),
+                          style: const TextStyle(
+                            fontSize: 13,
+                            color: Color(0xFF6A6A6A),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
-              ),
-            ),
-            // 情報
-            Positioned(
-              bottom: 20,
-              left: 20,
-              right: 20,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFFF9E80),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      recipe.category,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: 'Poppins',
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    recipe.title,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      fontFamily: 'Playfair',
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.schedule,
-                        size: 16,
-                        color: Colors.white.withOpacity(0.9),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${recipe.totalTime}分',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.white.withOpacity(0.9),
-                          fontFamily: 'Poppins',
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Icon(
-                        Icons.star,
-                        size: 16,
-                        color: const Color(0xFFFFB74D),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        recipe.rating.toString(),
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.white.withOpacity(0.9),
-                          fontFamily: 'Poppins',
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
               ),
             ),
           ],
@@ -400,14 +398,11 @@ class CalendarScreen extends HookConsumerWidget {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: const Color(0xFFE0E0E0),
+            width: 1,
+          ),
         ),
         child: Row(
           children: [
@@ -416,27 +411,26 @@ class CalendarScreen extends HookConsumerWidget {
               width: 60,
               height: 60,
               decoration: BoxDecoration(
-                color: const Color(0xFFFF9E80).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     '${date.month}月',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 11,
-                      color: const Color(0xFF8D6E63).withOpacity(0.7),
-                      fontFamily: 'Poppins',
+                      color: Color(0xFF6A6A6A),
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   Text(
                     '${date.day}',
                     style: const TextStyle(
                       fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFFFF9E80),
-                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFFFF6B35),
                     ),
                   ),
                 ],
@@ -463,43 +457,43 @@ class CalendarScreen extends HookConsumerWidget {
                     recipe.title,
                     style: const TextStyle(
                       fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF6D4C41),
-                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF1A1A1A),
+                      letterSpacing: -0.2,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   Row(
                     children: [
-                      Icon(
-                        Icons.schedule,
+                      const Icon(
+                        Icons.schedule_outlined,
                         size: 14,
-                        color: const Color(0xFF8D6E63).withOpacity(0.7),
+                        color: Color(0xFF6A6A6A),
                       ),
                       const SizedBox(width: 4),
                       Text(
                         '${recipe.totalTime}分',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 12,
-                          color: const Color(0xFF8D6E63).withOpacity(0.7),
-                          fontFamily: 'Poppins',
+                          color: Color(0xFF6A6A6A),
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       const SizedBox(width: 12),
-                      Icon(
+                      const Icon(
                         Icons.star,
                         size: 14,
-                        color: const Color(0xFFFFB74D),
+                        color: Color(0xFFF7931E),
                       ),
                       const SizedBox(width: 4),
                       Text(
                         recipe.rating.toString(),
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 12,
-                          color: const Color(0xFF8D6E63).withOpacity(0.7),
-                          fontFamily: 'Poppins',
+                          color: Color(0xFF6A6A6A),
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
@@ -507,10 +501,10 @@ class CalendarScreen extends HookConsumerWidget {
                 ],
               ),
             ),
-            Icon(
+            const Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: const Color(0xFF8D6E63).withOpacity(0.3),
+              color: Color(0xFFE0E0E0),
             ),
           ],
         ),

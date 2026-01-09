@@ -20,18 +20,25 @@ class RecipeDetailScreen extends HookConsumerWidget {
           SliverAppBar(
             expandedHeight: 350,
             pinned: true,
-            backgroundColor: const Color(0xFFFF9E80),
+            backgroundColor: const Color(0xFFFF6B35),
             leading: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.9),
+                  color: Colors.white,
                   shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 12,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
                 child: IconButton(
                   icon: const Icon(
                     Icons.arrow_back,
-                    color: Color(0xFF6D4C41),
+                    color: Color(0xFF1A1A1A),
                   ),
                   onPressed: () => Navigator.pop(context),
                 ),
@@ -45,16 +52,23 @@ class RecipeDetailScreen extends HookConsumerWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white,
                         shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.15),
+                            blurRadius: 12,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
                       child: isFavoriteAsync.when(
                         data: (isFavorite) => IconButton(
                           icon: Icon(
                             isFavorite ? Icons.favorite : Icons.favorite_border,
                             color: isFavorite
-                                ? const Color(0xFFFF6B6B)
-                                : const Color(0xFF6D4C41),
+                                ? const Color(0xFFFF6B35)
+                                : const Color(0xFF1A1A1A),
                           ),
                           onPressed: () async {
                             await ref
@@ -70,7 +84,7 @@ class RecipeDetailScreen extends HookConsumerWidget {
                             height: 24,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF6D4C41)),
+                              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF6B35)),
                             ),
                           ),
                         ),
@@ -78,8 +92,8 @@ class RecipeDetailScreen extends HookConsumerWidget {
                           icon: Icon(
                             recipe.isFavorite ? Icons.favorite : Icons.favorite_border,
                             color: recipe.isFavorite
-                                ? const Color(0xFFFF6B6B)
-                                : const Color(0xFF6D4C41),
+                                ? const Color(0xFFFF6B35)
+                                : const Color(0xFF1A1A1A),
                           ),
                           onPressed: () async {
                             await ref
@@ -104,61 +118,58 @@ class RecipeDetailScreen extends HookConsumerWidget {
                       recipe.imageUrl,
                       fit: BoxFit.cover,
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Colors.transparent,
-                            Colors.black.withOpacity(0.7),
-                          ],
-                        ),
-                      ),
-                    ),
                     Positioned(
                       bottom: 20,
                       left: 20,
                       right: 20,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
+                      child: Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.15),
+                              blurRadius: 20,
+                              offset: const Offset(0, 4),
                             ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFF9E80),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              recipe.category,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Poppins',
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 7,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFF6B35),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                recipe.category,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.3,
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            recipe.title,
-                            style: const TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              fontFamily: 'Playfair',
-                              shadows: [
-                                Shadow(
-                                  color: Colors.black45,
-                                  blurRadius: 8,
-                                ),
-                              ],
+                            const SizedBox(height: 12),
+                            Text(
+                              recipe.title,
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF1A1A1A),
+                                letterSpacing: -0.5,
+                                height: 1.2,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -170,10 +181,7 @@ class RecipeDetailScreen extends HookConsumerWidget {
           SliverToBoxAdapter(
             child: Container(
               decoration: const BoxDecoration(
-                color: Color(0xFFFFFAF5),
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(30),
-                ),
+                color: Color(0xFFF8F9FA),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,9 +218,9 @@ class RecipeDetailScreen extends HookConsumerWidget {
                       recipe.description,
                       style: const TextStyle(
                         fontSize: 15,
-                        height: 1.6,
-                        color: Color(0xFF8D6E63),
-                        fontFamily: 'Poppins',
+                        height: 1.7,
+                        color: Color(0xFF4A4A4A),
+                        letterSpacing: 0.1,
                       ),
                     ),
                   ),
@@ -224,7 +232,7 @@ class RecipeDetailScreen extends HookConsumerWidget {
                       children: [
                         Icon(
                           Icons.star,
-                          color: const Color(0xFFFFB74D),
+                          color: const Color(0xFFF7931E),
                           size: 24,
                         ),
                         const SizedBox(width: 8),
@@ -232,18 +240,16 @@ class RecipeDetailScreen extends HookConsumerWidget {
                           '${recipe.rating}',
                           style: const TextStyle(
                             fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF6D4C41),
-                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF1A1A1A),
                           ),
                         ),
                         const SizedBox(width: 8),
                         Text(
                           '(${recipe.comments.length} レビュー)',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 14,
-                            color: const Color(0xFF8D6E63).withOpacity(0.7),
-                            fontFamily: 'Poppins',
+                            color: Color(0xFF6A6A6A),
                           ),
                         ),
                       ],
@@ -262,22 +268,23 @@ class RecipeDetailScreen extends HookConsumerWidget {
                             .map(
                               (allergy) => Container(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
+                                  horizontal: 14,
+                                  vertical: 8,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFFFE0CC).withOpacity(0.5),
-                                  borderRadius: BorderRadius.circular(20),
+                                  color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
-                                    color: const Color(0xFFFF9E80).withOpacity(0.3),
+                                    color: const Color(0xFFFF6B35),
+                                    width: 1.5,
                                   ),
                                 ),
                                 child: Text(
                                   allergy,
                                   style: const TextStyle(
                                     fontSize: 12,
-                                    color: Color(0xFF6D4C41),
-                                    fontFamily: 'Poppins',
+                                    color: Color(0xFFFF6B35),
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
@@ -312,10 +319,10 @@ class RecipeDetailScreen extends HookConsumerWidget {
                                 child: Row(
                                   children: [
                                     Container(
-                                      width: 6,
-                                      height: 6,
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFFFF9E80),
+                                      width: 8,
+                                      height: 8,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFFFF6B35),
                                         shape: BoxShape.circle,
                                       ),
                                     ),
@@ -325,8 +332,8 @@ class RecipeDetailScreen extends HookConsumerWidget {
                                         ingredient,
                                         style: const TextStyle(
                                           fontSize: 14,
-                                          color: Color(0xFF6D4C41),
-                                          fontFamily: 'Poppins',
+                                          color: Color(0xFF1A1A1A),
+                                          fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                     ),
@@ -351,20 +358,26 @@ class RecipeDetailScreen extends HookConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
-                                width: 36,
-                                height: 36,
+                                width: 40,
+                                height: 40,
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFFF9E80),
+                                  color: const Color(0xFFFF6B35),
                                   shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFFFF6B35).withOpacity(0.3),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
                                 ),
                                 child: Center(
                                   child: Text(
                                     '${step.stepNumber}',
                                     style: const TextStyle(
                                       fontSize: 16,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w700,
                                       color: Colors.white,
-                                      fontFamily: 'Poppins',
                                     ),
                                   ),
                                 ),
@@ -388,9 +401,10 @@ class RecipeDetailScreen extends HookConsumerWidget {
                                     step.description,
                                     style: const TextStyle(
                                       fontSize: 14,
-                                      height: 1.6,
-                                      color: Color(0xFF6D4C41),
-                                      fontFamily: 'Poppins',
+                                      height: 1.7,
+                                      color: Color(0xFF1A1A1A),
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: 0.1,
                                     ),
                                   ),
                                 ),
@@ -443,9 +457,8 @@ class RecipeDetailScreen extends HookConsumerWidget {
                                             comment.userName,
                                             style: const TextStyle(
                                               fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: Color(0xFF6D4C41),
-                                              fontFamily: 'Poppins',
+                                              fontWeight: FontWeight.w700,
+                                              color: Color(0xFF1A1A1A),
                                             ),
                                           ),
                                           Row(
@@ -456,7 +469,7 @@ class RecipeDetailScreen extends HookConsumerWidget {
                                                     ? Icons.star
                                                     : Icons.star_border,
                                                 size: 14,
-                                                color: const Color(0xFFFFB74D),
+                                                color: const Color(0xFFF7931E),
                                               ),
                                             ),
                                           ),
@@ -470,9 +483,9 @@ class RecipeDetailScreen extends HookConsumerWidget {
                                   comment.comment,
                                   style: const TextStyle(
                                     fontSize: 13,
-                                    height: 1.5,
-                                    color: Color(0xFF8D6E63),
-                                    fontFamily: 'Poppins',
+                                    height: 1.6,
+                                    color: Color(0xFF4A4A4A),
+                                    letterSpacing: 0.1,
                                   ),
                                 ),
                               ],
@@ -498,39 +511,35 @@ class RecipeDetailScreen extends HookConsumerWidget {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: const Color(0xFFE0E0E0),
+            width: 1,
+          ),
         ),
         child: Column(
           children: [
             Icon(
               icon,
-              color: const Color(0xFFFF9E80),
-              size: 24,
+              color: const Color(0xFFFF6B35),
+              size: 26,
             ),
             const SizedBox(height: 8),
             Text(
               value,
               style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF6D4C41),
-                fontFamily: 'Poppins',
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF1A1A1A),
               ),
             ),
             const SizedBox(height: 4),
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 11,
-                color: const Color(0xFF8D6E63).withOpacity(0.7),
-                fontFamily: 'Poppins',
+                color: Color(0xFF6A6A6A),
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
@@ -546,9 +555,9 @@ class RecipeDetailScreen extends HookConsumerWidget {
         title,
         style: const TextStyle(
           fontSize: 22,
-          fontWeight: FontWeight.bold,
-          color: Color(0xFF6D4C41),
-          fontFamily: 'Playfair',
+          fontWeight: FontWeight.w800,
+          color: Color(0xFF1A1A1A),
+          letterSpacing: -0.5,
         ),
       ),
     );

@@ -16,23 +16,36 @@ class FavoritesScreen extends HookConsumerWidget {
           children: [
             Icon(
               Icons.favorite,
-              color: Color(0xFFFF6B6B),
+              color: Color(0xFFFF6B35),
               size: 28,
             ),
             SizedBox(width: 12),
-            Text('お気に入り'),
+            Text(
+              'お気に入り',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF1A1A1A),
+                letterSpacing: -0.5,
+              ),
+            ),
           ],
         ),
         leading: IconButton(
           icon: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: const Color(0xFFFF9E80).withOpacity(0.1),
+              color: Colors.white,
               shape: BoxShape.circle,
+              border: Border.all(
+                color: const Color(0xFFE0E0E0),
+                width: 1,
+              ),
             ),
             child: const Icon(
               Icons.arrow_back,
-              color: Color(0xFF6D4C41),
+              color: Color(0xFF1A1A1A),
+              size: 20,
             ),
           ),
           onPressed: () => Navigator.pop(context),
@@ -48,24 +61,24 @@ class FavoritesScreen extends HookConsumerWidget {
                   Icon(
                     Icons.favorite_border,
                     size: 80,
-                    color: const Color(0xFF8D6E63).withOpacity(0.3),
+                    color: const Color(0xFF6A6A6A).withOpacity(0.3),
                   ),
                   const SizedBox(height: 24),
-                  Text(
+                  const Text(
                     'お気に入りのレシピがありません',
                     style: TextStyle(
                       fontSize: 18,
-                      color: const Color(0xFF8D6E63).withOpacity(0.7),
-                      fontFamily: 'Poppins',
+                      color: Color(0xFF1A1A1A),
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 12),
-                  Text(
+                  const Text(
                     'ハートマークをタップしてお気に入りに追加',
                     style: TextStyle(
                       fontSize: 14,
-                      color: const Color(0xFF8D6E63).withOpacity(0.5),
-                      fontFamily: 'Poppins',
+                      color: Color(0xFF6A6A6A),
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],
@@ -89,7 +102,7 @@ class FavoritesScreen extends HookConsumerWidget {
         },
         loading: () => const Center(
           child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF9E80)),
+            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF6B35)),
           ),
         ),
         error: (error, stack) => Center(
@@ -99,15 +112,15 @@ class FavoritesScreen extends HookConsumerWidget {
               Icon(
                 Icons.error_outline,
                 size: 64,
-                color: const Color(0xFF8D6E63).withOpacity(0.3),
+                color: const Color(0xFF6A6A6A).withOpacity(0.3),
               ),
               const SizedBox(height: 16),
-              Text(
+              const Text(
                 'エラーが発生しました',
                 style: TextStyle(
                   fontSize: 16,
-                  color: const Color(0xFF8D6E63).withOpacity(0.7),
-                  fontFamily: 'Poppins',
+                  color: Color(0xFF6A6A6A),
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],

@@ -24,7 +24,7 @@ class RecipeListScreen extends HookConsumerWidget {
             // カスタムAppBar
             SliverAppBar(
               floating: true,
-              backgroundColor: const Color(0xFFFFFAF5),
+              backgroundColor: const Color(0xFFF8F9FA),
               elevation: 0,
               expandedHeight: 80,
               flexibleSpace: FlexibleSpaceBar(
@@ -34,29 +34,29 @@ class RecipeListScreen extends HookConsumerWidget {
                     const Text(
                       'Recipe',
                       style: TextStyle(
-                        fontFamily: 'Playfair',
                         fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF6D4C41),
+                        fontWeight: FontWeight.w800,
+                        color: Color(0xFF1A1A1A),
+                        letterSpacing: -0.5,
                       ),
                     ),
                     const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
+                        horizontal: 10,
+                        vertical: 5,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFF9E80).withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(8),
+                        color: const Color(0xFFFF6B35),
+                        borderRadius: BorderRadius.circular(6),
                       ),
                       child: const Text(
                         'Search',
                         style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFFFF6F40),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          letterSpacing: 0.3,
                         ),
                       ),
                     ),
@@ -69,13 +69,17 @@ class RecipeListScreen extends HookConsumerWidget {
                   icon: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFF9E80).withOpacity(0.1),
+                      color: Colors.white,
                       shape: BoxShape.circle,
+                      border: Border.all(
+                        color: const Color(0xFFE0E0E0),
+                        width: 1,
+                      ),
                     ),
                     child: const Icon(
                       Icons.favorite,
-                      color: Color(0xFFFF6B6B),
-                      size: 22,
+                      color: Color(0xFFFF6B35),
+                      size: 20,
                     ),
                   ),
                   onPressed: () {
@@ -92,13 +96,17 @@ class RecipeListScreen extends HookConsumerWidget {
                   icon: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFFB74D).withOpacity(0.1),
+                      color: Colors.white,
                       shape: BoxShape.circle,
+                      border: Border.all(
+                        color: const Color(0xFFE0E0E0),
+                        width: 1,
+                      ),
                     ),
                     child: const Icon(
                       Icons.calendar_month,
-                      color: Color(0xFFFF9E80),
-                      size: 22,
+                      color: Color(0xFF1A1A1A),
+                      size: 20,
                     ),
                   ),
                   onPressed: () {
@@ -129,15 +137,15 @@ class RecipeListScreen extends HookConsumerWidget {
                           Icon(
                             Icons.search_off,
                             size: 64,
-                            color: const Color(0xFF8D6E63).withOpacity(0.3),
+                            color: const Color(0xFF6A6A6A).withOpacity(0.3),
                           ),
                           const SizedBox(height: 16),
-                          Text(
+                          const Text(
                             'レシピが見つかりませんでした',
                             style: TextStyle(
                               fontSize: 16,
-                              color: const Color(0xFF8D6E63).withOpacity(0.7),
-                              fontFamily: 'Poppins',
+                              color: Color(0xFF6A6A6A),
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
@@ -167,17 +175,18 @@ class RecipeListScreen extends HookConsumerWidget {
               loading: () => const SliverFillRemaining(
                 child: Center(
                   child: CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF9E80)),
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF6B35)),
                   ),
                 ),
               ),
-              error: (error, stack) => SliverFillRemaining(
+              error: (error, stack) => const SliverFillRemaining(
                 child: Center(
                   child: Text(
                     'エラーが発生しました',
                     style: TextStyle(
-                      color: const Color(0xFF8D6E63).withOpacity(0.7),
-                      fontFamily: 'Poppins',
+                      color: Color(0xFF6A6A6A),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
                     ),
                   ),
                 ),

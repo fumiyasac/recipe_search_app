@@ -31,14 +31,11 @@ class FilterSection extends HookConsumerWidget {
           Container(
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: const Color(0xFFE0E0E0),
+                width: 1,
+              ),
             ),
             child: TextField(
               controller: searchController,
@@ -47,26 +44,26 @@ class FilterSection extends HookConsumerWidget {
               },
               style: const TextStyle(
                 fontSize: 14,
-                fontFamily: 'Poppins',
-                color: Color(0xFF6D4C41),
+                color: Color(0xFF1A1A1A),
+                fontWeight: FontWeight.w500,
               ),
               decoration: InputDecoration(
                 hintText: 'レシピを検索...',
-                hintStyle: TextStyle(
-                  color: const Color(0xFF8D6E63).withOpacity(0.5),
+                hintStyle: const TextStyle(
+                  color: Color(0xFF9A9A9A),
                   fontSize: 14,
-                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w400,
                 ),
-                prefixIcon: Icon(
+                prefixIcon: const Icon(
                   Icons.search,
-                  color: const Color(0xFFFF9E80).withOpacity(0.8),
+                  color: Color(0xFF6A6A6A),
                   size: 22,
                 ),
                 suffixIcon: searchController.text.isNotEmpty
                     ? IconButton(
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.clear,
-                          color: const Color(0xFF8D6E63).withOpacity(0.5),
+                          color: Color(0xFF6A6A6A),
                           size: 20,
                         ),
                         onPressed: () {
@@ -89,24 +86,23 @@ class FilterSection extends HookConsumerWidget {
             length: categories.length,
             initialIndex: categories.indexOf(selectedCategory),
             child: ButtonsTabBar(
-              backgroundColor: const Color(0xFFFF9E80),
+              backgroundColor: const Color(0xFFFF6B35),
               unselectedBackgroundColor: Colors.white,
               unselectedLabelStyle: const TextStyle(
-                color: Color(0xFF8D6E63),
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w500,
+                color: Color(0xFF6A6A6A),
+                fontWeight: FontWeight.w600,
               ),
               labelStyle: const TextStyle(
                 color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.2,
               ),
-              borderWidth: 1,
-              borderColor: const Color(0xFFFF9E80).withOpacity(0.3),
-              unselectedBorderColor: const Color(0xFFFFE0CC).withOpacity(0.5),
-              radius: 100,
+              borderWidth: 1.5,
+              borderColor: const Color(0xFFFF6B35),
+              unselectedBorderColor: const Color(0xFFE0E0E0),
+              radius: 8,
               contentPadding: const EdgeInsets.symmetric(
-                horizontal: 20,
+                horizontal: 18,
                 vertical: 10,
               ),
               onTap: (index) {

@@ -38,25 +38,6 @@ class CalendarScreen extends HookConsumerWidget {
             ),
           ],
         ),
-        leading: IconButton(
-          icon: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: const Color(0xFFE0E0E0),
-                width: 1,
-              ),
-            ),
-            child: const Icon(
-              Icons.arrow_back,
-              color: Color(0xFF1A1A1A),
-              size: 20,
-            ),
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
       ),
       body: monthlyRecipesAsync.when(
         data: (monthlyRecipes) {

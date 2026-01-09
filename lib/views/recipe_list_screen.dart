@@ -3,8 +3,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../viewmodels/providers.dart';
 import '../widgets/recipe_card.dart';
 import '../widgets/filter_section.dart';
-import 'favorites_screen.dart';
-import 'calendar_screen.dart';
 
 class RecipeListScreen extends HookConsumerWidget {
   const RecipeListScreen({super.key});
@@ -63,63 +61,6 @@ class RecipeListScreen extends HookConsumerWidget {
                   ],
                 ),
               ),
-              actions: [
-                // お気に入りボタン
-                IconButton(
-                  icon: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: const Color(0xFFE0E0E0),
-                        width: 1,
-                      ),
-                    ),
-                    child: const Icon(
-                      Icons.favorite,
-                      color: Color(0xFFFF6B35),
-                      size: 20,
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const FavoritesScreen(),
-                      ),
-                    );
-                  },
-                ),
-                // カレンダーボタン
-                IconButton(
-                  icon: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: const Color(0xFFE0E0E0),
-                        width: 1,
-                      ),
-                    ),
-                    child: const Icon(
-                      Icons.calendar_month,
-                      color: Color(0xFF1A1A1A),
-                      size: 20,
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const CalendarScreen(),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(width: 8),
-              ],
             ),
             // フィルターセクション
             const SliverToBoxAdapter(

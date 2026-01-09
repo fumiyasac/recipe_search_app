@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'views/recipe_list_screen.dart';
+import 'views/main_navigation_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -87,7 +87,7 @@ class RecipeApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const RecipeListScreen(),
+      home: const MainNavigationScreen(),
     );
   }
 }

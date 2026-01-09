@@ -561,3 +561,55 @@ abstract class _$RecipeFavoriteStatus extends $AsyncNotifier<bool> {
     element.handleCreate(ref, () => build(_$args));
   }
 }
+
+@ProviderFor(SelectedTabIndex)
+final selectedTabIndexProvider = SelectedTabIndexProvider._();
+
+final class SelectedTabIndexProvider
+    extends $NotifierProvider<SelectedTabIndex, int> {
+  SelectedTabIndexProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'selectedTabIndexProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$selectedTabIndexHash();
+
+  @$internal
+  @override
+  SelectedTabIndex create() => SelectedTabIndex();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+}
+
+String _$selectedTabIndexHash() => r'5ef07cfd6a5dbe273b54d4a97e8b9bf1147b424e';
+
+abstract class _$SelectedTabIndex extends $Notifier<int> {
+  int build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<int, int>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<int, int>,
+              int,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}

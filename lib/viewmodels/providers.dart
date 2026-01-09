@@ -162,3 +162,14 @@ class RecipeFavoriteStatus extends _$RecipeFavoriteStatus {
     });
   }
 }
+
+// 選択中のタブインデックスプロバイダー
+@riverpod
+class SelectedTabIndex extends _$SelectedTabIndex {
+  @override
+  int build() => 0; // デフォルトはホーム画面
+
+  void update(int index) {
+    state = index;
+  }
+}

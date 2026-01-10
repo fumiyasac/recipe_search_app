@@ -141,79 +141,33 @@ abstract class _$RecipeList extends $AsyncNotifier<List<Recipe>> {
 }
 
 @ProviderFor(FilteredRecipes)
-final filteredRecipesProvider = FilteredRecipesFamily._();
+final filteredRecipesProvider = FilteredRecipesProvider._();
 
 final class FilteredRecipesProvider
     extends $AsyncNotifierProvider<FilteredRecipes, List<Recipe>> {
-  FilteredRecipesProvider._({
-    required FilteredRecipesFamily super.from,
-    required (String, String) super.argument,
-  }) : super(
-         retry: null,
-         name: r'filteredRecipesProvider',
-         isAutoDispose: true,
-         dependencies: null,
-         $allTransitiveDependencies: null,
-       );
+  FilteredRecipesProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'filteredRecipesProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
   @override
   String debugGetCreateSourceHash() => _$filteredRecipesHash();
 
-  @override
-  String toString() {
-    return r'filteredRecipesProvider'
-        ''
-        '$argument';
-  }
-
   @$internal
   @override
   FilteredRecipes create() => FilteredRecipes();
-
-  @override
-  bool operator ==(Object other) {
-    return other is FilteredRecipesProvider && other.argument == argument;
-  }
-
-  @override
-  int get hashCode {
-    return argument.hashCode;
-  }
 }
 
-String _$filteredRecipesHash() => r'3424a403c3134f58e54ae2b10715b053b42ee89f';
-
-final class FilteredRecipesFamily extends $Family
-    with
-        $ClassFamilyOverride<
-          FilteredRecipes,
-          AsyncValue<List<Recipe>>,
-          List<Recipe>,
-          FutureOr<List<Recipe>>,
-          (String, String)
-        > {
-  FilteredRecipesFamily._()
-    : super(
-        retry: null,
-        name: r'filteredRecipesProvider',
-        dependencies: null,
-        $allTransitiveDependencies: null,
-        isAutoDispose: true,
-      );
-
-  FilteredRecipesProvider call(String category, String searchQuery) =>
-      FilteredRecipesProvider._(argument: (category, searchQuery), from: this);
-
-  @override
-  String toString() => r'filteredRecipesProvider';
-}
+String _$filteredRecipesHash() => r'dc688cca8546c44fb854921ef6fb523e92cbecc1';
 
 abstract class _$FilteredRecipes extends $AsyncNotifier<List<Recipe>> {
-  late final _$args = ref.$arg as (String, String);
-  String get category => _$args.$1;
-  String get searchQuery => _$args.$2;
-
-  FutureOr<List<Recipe>> build(String category, String searchQuery);
+  FutureOr<List<Recipe>> build();
   @$mustCallSuper
   @override
   void runBuild() {
@@ -226,7 +180,7 @@ abstract class _$FilteredRecipes extends $AsyncNotifier<List<Recipe>> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, () => build(_$args.$1, _$args.$2));
+    element.handleCreate(ref, build);
   }
 }
 
@@ -274,6 +228,58 @@ abstract class _$FavoriteRecipes extends $AsyncNotifier<List<Recipe>> {
   }
 }
 
+@ProviderFor(RecipeFilterState)
+final recipeFilterStateProvider = RecipeFilterStateProvider._();
+
+final class RecipeFilterStateProvider
+    extends $NotifierProvider<RecipeFilterState, FilterState> {
+  RecipeFilterStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'recipeFilterStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$recipeFilterStateHash();
+
+  @$internal
+  @override
+  RecipeFilterState create() => RecipeFilterState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(FilterState value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<FilterState>(value),
+    );
+  }
+}
+
+String _$recipeFilterStateHash() => r'c86b561e2c9f098f69b2ab93bf8ba95e2943e2fd';
+
+abstract class _$RecipeFilterState extends $Notifier<FilterState> {
+  FilterState build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<FilterState, FilterState>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<FilterState, FilterState>,
+              FilterState,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(SelectedCategory)
 final selectedCategoryProvider = SelectedCategoryProvider._();
 
@@ -306,7 +312,7 @@ final class SelectedCategoryProvider
   }
 }
 
-String _$selectedCategoryHash() => r'17f07f5772ee1f70a1ef95c90a6f9c1566212c75';
+String _$selectedCategoryHash() => r'022ede462af5ae479e2bf4a3272bba5eac92d822';
 
 abstract class _$SelectedCategory extends $Notifier<String> {
   String build();
@@ -357,7 +363,7 @@ final class SearchQueryProvider extends $NotifierProvider<SearchQuery, String> {
   }
 }
 
-String _$searchQueryHash() => r'446383cb599327bea368f8da496260b05a5f9bec';
+String _$searchQueryHash() => r'0731fb0813d940c3859a3ef6b9b7748cf1647c21';
 
 abstract class _$SearchQuery extends $Notifier<String> {
   String build();

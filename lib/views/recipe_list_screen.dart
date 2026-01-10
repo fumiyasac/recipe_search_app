@@ -9,11 +9,7 @@ class RecipeListScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selectedCategory = ref.watch(selectedCategoryProvider);
-    final searchQuery = ref.watch(searchQueryProvider);
-    final recipesAsync = ref.watch(
-      filteredRecipesProvider(selectedCategory, searchQuery),
-    );
+    final recipesAsync = ref.watch(filteredRecipesProvider);
 
     return Scaffold(
       appBar: AppBar(

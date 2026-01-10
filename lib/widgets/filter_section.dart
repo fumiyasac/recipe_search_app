@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import '../viewmodels/providers.dart';
+import 'advanced_filter_sheet.dart';
 
 class FilterSection extends HookConsumerWidget {
   const FilterSection({super.key});
@@ -10,6 +11,8 @@ class FilterSection extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final searchController = useTextEditingController();
     final selectedCategory = ref.watch(selectedCategoryProvider);
+    final filterState = ref.watch(recipeFilterStateProvider);
+    final activeCount = filterState.activeFilterCount;
 
     final categories = [
       'すべて',
@@ -121,6 +124,59 @@ class FilterSection extends HookConsumerWidget {
                   ),
                 );
               }).toList(),
+            ),
+          ),
+          const SizedBox(height: 16),
+          // 詳細フィルタボタン
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (context) => const AdvancedFilterSheet(),
+                );
+              },
+              icon: const Icon(Icons.tune, color: Color(0xFFFF6B35)),
+              label: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    '詳細フィルタ',
+                    style: TextStyle(
+                      color: Color(0xFFFF6B35),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  if (activeCount > 0) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFF6B35),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '$activeCount',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: Color(0xFFFF6B35)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
             ),
           ),
         ],

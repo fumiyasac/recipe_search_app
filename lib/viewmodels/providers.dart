@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../database/database.dart';
 import '../repositories/recipe_repository.dart';
 import '../models/recipe.dart';
+import '../models/filter_state.dart';
 
 part 'providers.g.dart';
 
@@ -40,21 +41,86 @@ class RecipeList extends _$RecipeList {
 @riverpod
 class FilteredRecipes extends _$FilteredRecipes {
   @override
-  Future<List<Recipe>> build(String category, String searchQuery) async {
+  Future<List<Recipe>> build() async {
     final repository = ref.watch(recipeRepositoryProvider);
+    final filterState = ref.watch(recipeFilterStateProvider);
+
     var recipes = await repository.getAllRecipes();
 
-    // カテゴリフィルタ
-    if (category != 'すべて') {
-      recipes = recipes.where((r) => r.category == category).toList();
+    // 1. カテゴリフィルタ
+    if (filterState.category != 'すべて') {
+      recipes = recipes.where((r) => r.category == filterState.category).toList();
     }
 
-    // 検索フィルタ
-    if (searchQuery.isNotEmpty) {
+    // 2. 検索クエリフィルタ
+    if (filterState.searchQuery.isNotEmpty) {
       recipes = recipes.where((recipe) {
-        return recipe.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
-            recipe.description.toLowerCase().contains(searchQuery.toLowerCase());
+        return recipe.title.toLowerCase().contains(filterState.searchQuery.toLowerCase()) ||
+            recipe.description.toLowerCase().contains(filterState.searchQuery.toLowerCase());
       }).toList();
+    }
+
+    // 3. 難易度フィルタ（OR条件）
+    if (filterState.difficulties.isNotEmpty) {
+      recipes = recipes.where((r) =>
+        filterState.difficulties.contains(r.difficulty)
+      ).toList();
+    }
+
+    // 4. 調理時間フィルタ
+    if (filterState.cookingTimeRange != null) {
+      recipes = recipes.where((r) =>
+        r.totalTime <= filterState.cookingTimeRange!.maxMinutes
+      ).toList();
+    }
+
+    // 5. カロリーフィルタ
+    if (filterState.calorieRange != null) {
+      recipes = recipes.where((r) =>
+        r.calories <= filterState.calorieRange!.maxCalories
+      ).toList();
+    }
+
+    // 6. 評価フィルタ
+    if (filterState.minRating != null) {
+      recipes = recipes.where((r) =>
+        r.rating >= filterState.minRating!
+      ).toList();
+    }
+
+    // 7. アレルギー除外フィルタ（AND条件: 指定アレルギーを含まない）
+    if (filterState.excludedAllergies.isNotEmpty) {
+      recipes = recipes.where((r) =>
+        !r.allergies.any((a) => filterState.excludedAllergies.contains(a))
+      ).toList();
+    }
+
+    // 8. タグフィルタ（AND条件: すべてのタグを含む）
+    if (filterState.selectedTags.isNotEmpty) {
+      recipes = recipes.where((r) =>
+        filterState.selectedTags.every((tag) => r.tags.contains(tag))
+      ).toList();
+    }
+
+    // 9. 材料フィルタ
+    if (filterState.ingredientFilter != null) {
+      if (filterState.ingredientFilter!.mustInclude.isNotEmpty) {
+        recipes = recipes.where((r) =>
+          filterState.ingredientFilter!.mustInclude.every((ingredient) =>
+            r.ingredients.any((i) => i.toLowerCase().contains(ingredient.toLowerCase()))
+          )
+        ).toList();
+      }
+
+      if (filterState.ingredientFilter!.mustExclude.isNotEmpty) {
+        recipes = recipes.where((r) =>
+          !r.ingredients.any((i) =>
+            filterState.ingredientFilter!.mustExclude.any((ingredient) =>
+              i.toLowerCase().contains(ingredient.toLowerCase())
+            )
+          )
+        ).toList();
+      }
     }
 
     return recipes;
@@ -101,25 +167,102 @@ class FavoriteRecipes extends _$FavoriteRecipes {
   }
 }
 
-// 選択中のカテゴリプロバイダー
+// フィルタ状態プロバイダー（新規）
 @riverpod
-class SelectedCategory extends _$SelectedCategory {
+class RecipeFilterState extends _$RecipeFilterState {
   @override
-  String build() => 'すべて';
+  FilterState build() => FilterState.initial();
 
-  void update(String category) {
-    state = category;
+  void updateCategory(String category) {
+    state = state.copyWith(category: category);
+  }
+
+  void updateSearchQuery(String query) {
+    state = state.copyWith(searchQuery: query);
+  }
+
+  void toggleDifficulty(String difficulty) {
+    final newSet = Set<String>.from(state.difficulties);
+    if (newSet.contains(difficulty)) {
+      newSet.remove(difficulty);
+    } else {
+      newSet.add(difficulty);
+    }
+    state = state.copyWith(difficulties: newSet);
+  }
+
+  void updateCookingTimeRange(CookingTimeRange? range) {
+    state = state.copyWith(
+      cookingTimeRange: range,
+      clearCookingTimeRange: range == null,
+    );
+  }
+
+  void updateCalorieRange(CalorieRange? range) {
+    state = state.copyWith(
+      calorieRange: range,
+      clearCalorieRange: range == null,
+    );
+  }
+
+  void updateMinRating(double? rating) {
+    state = state.copyWith(
+      minRating: rating,
+      clearMinRating: rating == null,
+    );
+  }
+
+  void toggleAllergyExclusion(String allergy) {
+    final newSet = Set<String>.from(state.excludedAllergies);
+    if (newSet.contains(allergy)) {
+      newSet.remove(allergy);
+    } else {
+      newSet.add(allergy);
+    }
+    state = state.copyWith(excludedAllergies: newSet);
+  }
+
+  void toggleTag(String tag) {
+    final newSet = Set<String>.from(state.selectedTags);
+    if (newSet.contains(tag)) {
+      newSet.remove(tag);
+    } else {
+      newSet.add(tag);
+    }
+    state = state.copyWith(selectedTags: newSet);
+  }
+
+  void updateIngredientFilter(IngredientFilter? filter) {
+    state = state.copyWith(
+      ingredientFilter: filter,
+      clearIngredientFilter: filter == null,
+    );
+  }
+
+  void reset() {
+    state = FilterState.initial();
   }
 }
 
-// 検索クエリプロバイダー
+// 選択中のカテゴリプロバイダー（後方互換性のため）
+@riverpod
+class SelectedCategory extends _$SelectedCategory {
+  @override
+  String build() => ref.watch(recipeFilterStateProvider).category;
+
+  void update(String category) {
+    ref.read(recipeFilterStateProvider.notifier).updateCategory(category);
+  }
+}
+
+// 検索クエリプロバイダー（後方互換性のため）
 @riverpod
 class SearchQuery extends _$SearchQuery {
   @override
-  String build() => '';
+  String build() => ref.watch(recipeFilterStateProvider).searchQuery;
 
   void update(String query) {
-    state = query;
+    ref.read(recipeFilterStateProvider.notifier).updateSearchQuery(query);
   }
 }
 

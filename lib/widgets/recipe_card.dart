@@ -225,29 +225,6 @@ class RecipeCard extends HookConsumerWidget {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        const Spacer(),
-                        // カロリー
-                        Flexible(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 3,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF8F9FA),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              '${recipe.calories}kcal',
-                              style: const TextStyle(
-                                fontSize: 10,
-                                color: Color(0xFF4A4A4A),
-                                fontWeight: FontWeight.w600,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
                       ],
                     ),
                   ],

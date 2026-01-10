@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:buttons_tabbar/buttons_tabbar.dart';
 import '../viewmodels/providers.dart';
 
 class FilterSection extends HookConsumerWidget {
@@ -82,43 +81,46 @@ class FilterSection extends HookConsumerWidget {
           ),
           const SizedBox(height: 20),
           // カテゴリタブ
-          DefaultTabController(
-            length: categories.length,
-            initialIndex: categories.indexOf(selectedCategory),
-            child: ButtonsTabBar(
-              backgroundColor: const Color(0xFFFF6B35),
-              unselectedBackgroundColor: Colors.white,
-              unselectedLabelStyle: const TextStyle(
-                color: Color(0xFF6A6A6A),
-                fontWeight: FontWeight.w600,
-              ),
-              labelStyle: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.2,
-              ),
-              borderWidth: 1.5,
-              borderColor: const Color(0xFFFF6B35),
-              unselectedBorderColor: const Color(0xFFE0E0E0),
-              radius: 8,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 18,
-                vertical: 10,
-              ),
-              onTap: (index) {
-                final category = categories[index];
-                ref.read(selectedCategoryProvider.notifier).update(category);
-              },
-              tabs: categories
-                  .map(
-                    (category) => Tab(
-                      child: Text(
-                        category,
-                        style: const TextStyle(fontSize: 13),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: categories.map((category) {
+                final isSelected = selectedCategory == category;
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: ChoiceChip(
+                    label: Text(
+                      category,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: isSelected ? Colors.white : const Color(0xFF6A6A6A),
+                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                        letterSpacing: 0.2,
                       ),
                     ),
-                  )
-                  .toList(),
+                    selected: isSelected,
+                    onSelected: (selected) {
+                      if (selected) {
+                        ref.read(selectedCategoryProvider.notifier).update(category);
+                      }
+                    },
+                    selectedColor: const Color(0xFFFF6B35),
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      side: BorderSide(
+                        color: isSelected ? const Color(0xFFFF6B35) : const Color(0xFFE0E0E0),
+                        width: 1.5,
+                      ),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 18,
+                      vertical: 10,
+                    ),
+                    showCheckmark: false,
+                  ),
+                );
+              }).toList(),
             ),
           ),
         ],

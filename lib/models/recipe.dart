@@ -14,6 +14,10 @@ class Recipe {
   final List<String> allergies;
   final List<RecipeComment> comments;
   final bool isFavorite;
+  final NutritionInfo? nutritionInfo;
+  final String difficulty; // 'easy', 'medium', 'hard'
+  final List<String> tags;
+  final List<String> cookingTools;
 
   Recipe({
     required this.id,
@@ -31,6 +35,10 @@ class Recipe {
     required this.allergies,
     required this.comments,
     this.isFavorite = false,
+    this.nutritionInfo,
+    this.difficulty = 'medium',
+    this.tags = const [],
+    this.cookingTools = const [],
   });
 
   Recipe copyWith({
@@ -49,6 +57,10 @@ class Recipe {
     List<String>? allergies,
     List<RecipeComment>? comments,
     bool? isFavorite,
+    NutritionInfo? nutritionInfo,
+    String? difficulty,
+    List<String>? tags,
+    List<String>? cookingTools,
   }) {
     return Recipe(
       id: id ?? this.id,
@@ -66,6 +78,10 @@ class Recipe {
       allergies: allergies ?? this.allergies,
       comments: comments ?? this.comments,
       isFavorite: isFavorite ?? this.isFavorite,
+      nutritionInfo: nutritionInfo ?? this.nutritionInfo,
+      difficulty: difficulty ?? this.difficulty,
+      tags: tags ?? this.tags,
+      cookingTools: cookingTools ?? this.cookingTools,
     );
   }
 
@@ -99,5 +115,21 @@ class RecipeComment {
     required this.comment,
     required this.rating,
     required this.createdAt,
+  });
+}
+
+class NutritionInfo {
+  final double protein; // タンパク質 (g)
+  final double fat; // 脂質 (g)
+  final double carbs; // 炭水化物 (g)
+  final double fiber; // 食物繊維 (g)
+  final double salt; // 塩分 (g)
+
+  NutritionInfo({
+    required this.protein,
+    required this.fat,
+    required this.carbs,
+    required this.fiber,
+    required this.salt,
   });
 }

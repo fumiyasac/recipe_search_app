@@ -225,11 +225,46 @@ class RecipeDetailScreen extends HookConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  // 評価
+                  // 難易度と評価
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Row(
                       children: [
+                        // 難易度
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _getDifficultyColor(recipe.difficulty).withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: _getDifficultyColor(recipe.difficulty),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                _getDifficultyIcon(recipe.difficulty),
+                                color: _getDifficultyColor(recipe.difficulty),
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                _getDifficultyLabel(recipe.difficulty),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: _getDifficultyColor(recipe.difficulty),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        // 評価
                         Icon(
                           Icons.star,
                           color: const Color(0xFFF7931E),
@@ -246,7 +281,7 @@ class RecipeDetailScreen extends HookConsumerWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          '(${recipe.comments.length} レビュー)',
+                          '(${recipe.comments.length})',
                           style: const TextStyle(
                             fontSize: 14,
                             color: Color(0xFF6A6A6A),
@@ -256,6 +291,41 @@ class RecipeDetailScreen extends HookConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 32),
+                  // 栄養情報
+                  if (recipe.nutritionInfo != null) ...[
+                    _buildSectionTitle('栄養成分（1人分）'),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.04),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            _buildNutritionRow('タンパク質', '${recipe.nutritionInfo!.protein}g', Icons.fitness_center),
+                            const Divider(height: 24),
+                            _buildNutritionRow('脂質', '${recipe.nutritionInfo!.fat}g', Icons.opacity),
+                            const Divider(height: 24),
+                            _buildNutritionRow('炭水化物', '${recipe.nutritionInfo!.carbs}g', Icons.grain),
+                            const Divider(height: 24),
+                            _buildNutritionRow('食物繊維', '${recipe.nutritionInfo!.fiber}g', Icons.eco),
+                            const Divider(height: 24),
+                            _buildNutritionRow('塩分', '${recipe.nutritionInfo!.salt}g', Icons.water_drop),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                  ],
                   // アレルギー情報
                   if (recipe.allergies.isNotEmpty) ...[
                     _buildSectionTitle('アレルギー情報'),
@@ -290,6 +360,118 @@ class RecipeDetailScreen extends HookConsumerWidget {
                               ),
                             )
                             .toList(),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                  ],
+                  // タグ
+                  if (recipe.tags.isNotEmpty) ...[
+                    _buildSectionTitle('タグ'),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: recipe.tags
+                            .map(
+                              (tag) => Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF4CAF50).withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: const Color(0xFF4CAF50),
+                                    width: 1.5,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      _getTagIcon(tag),
+                                      size: 14,
+                                      color: const Color(0xFF4CAF50),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      tag,
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: Color(0xFF4CAF50),
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                  ],
+                  // 調理器具
+                  if (recipe.cookingTools.isNotEmpty) ...[
+                    _buildSectionTitle('必要な調理器具'),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.04),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Wrap(
+                          spacing: 12,
+                          runSpacing: 12,
+                          children: recipe.cookingTools
+                              .map(
+                                (tool) => Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 10,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFF8F9FA),
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: const Color(0xFFE0E0E0),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        _getCookingToolIcon(tool),
+                                        size: 18,
+                                        color: const Color(0xFFFF6B35),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        tool,
+                                        style: const TextStyle(
+                                          fontSize: 13,
+                                          color: Color(0xFF1A1A1A),
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -561,5 +743,107 @@ class RecipeDetailScreen extends HookConsumerWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildNutritionRow(String label, String value, IconData icon) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          color: const Color(0xFFFF6B35),
+          size: 20,
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: 14,
+              color: Color(0xFF4A4A4A),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF1A1A1A),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Color _getDifficultyColor(String difficulty) {
+    switch (difficulty) {
+      case 'easy':
+        return const Color(0xFF4CAF50);
+      case 'hard':
+        return const Color(0xFFFF6B35);
+      default:
+        return const Color(0xFFF7931E);
+    }
+  }
+
+  IconData _getDifficultyIcon(String difficulty) {
+    switch (difficulty) {
+      case 'easy':
+        return Icons.sentiment_satisfied;
+      case 'hard':
+        return Icons.whatshot;
+      default:
+        return Icons.thumb_up;
+    }
+  }
+
+  String _getDifficultyLabel(String difficulty) {
+    switch (difficulty) {
+      case 'easy':
+        return '簡単';
+      case 'hard':
+        return '上級';
+      default:
+        return '中級';
+    }
+  }
+
+  IconData _getTagIcon(String tag) {
+    final lowerTag = tag.toLowerCase();
+    if (lowerTag.contains('ベジタリアン') || lowerTag.contains('野菜')) {
+      return Icons.spa;
+    } else if (lowerTag.contains('時短') || lowerTag.contains('簡単')) {
+      return Icons.timer;
+    } else if (lowerTag.contains('ヘルシー') || lowerTag.contains('低カロリー')) {
+      return Icons.favorite;
+    } else if (lowerTag.contains('作り置き')) {
+      return Icons.calendar_today;
+    } else if (lowerTag.contains('グルテンフリー')) {
+      return Icons.no_meals;
+    } else {
+      return Icons.label;
+    }
+  }
+
+  IconData _getCookingToolIcon(String tool) {
+    final lowerTool = tool.toLowerCase();
+    if (lowerTool.contains('フライパン')) {
+      return Icons.set_meal;
+    } else if (lowerTool.contains('鍋') || lowerTool.contains('ポット')) {
+      return Icons.soup_kitchen;
+    } else if (lowerTool.contains('オーブン')) {
+      return Icons.microwave;
+    } else if (lowerTool.contains('ボウル')) {
+      return Icons.rice_bowl;
+    } else if (lowerTool.contains('包丁') || lowerTool.contains('ナイフ')) {
+      return Icons.restaurant_menu;
+    } else if (lowerTool.contains('まな板')) {
+      return Icons.countertops;
+    } else if (lowerTool.contains('ミキサー') || lowerTool.contains('ブレンダー')) {
+      return Icons.blender;
+    } else {
+      return Icons.kitchen;
+    }
   }
 }

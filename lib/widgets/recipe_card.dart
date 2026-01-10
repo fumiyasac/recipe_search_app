@@ -151,48 +151,56 @@ class RecipeCard extends HookConsumerWidget {
             Expanded(
               flex: 2,
               child: Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding: const EdgeInsets.all(10.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.max,
                   children: [
-                    // タイトル
-                    Text(
-                      recipe.title,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF1A1A1A),
-                        height: 1.3,
-                        letterSpacing: -0.2,
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // タイトル
+                          Text(
+                            recipe.title,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF1A1A1A),
+                              height: 1.2,
+                              letterSpacing: -0.2,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          // 説明文
+                          Text(
+                            recipe.description,
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: Color(0xFF6A6A6A),
+                              height: 1.3,
+                              letterSpacing: 0,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 6),
-                    // 説明文
-                    Text(
-                      recipe.description,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFF6A6A6A),
-                        height: 1.4,
-                        letterSpacing: 0,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const Spacer(),
                     // メタ情報
                     Row(
                       children: [
                         // 調理時間
-                        Icon(
+                        const Icon(
                           Icons.schedule_outlined,
-                          size: 15,
-                          color: const Color(0xFF6A6A6A),
+                          size: 14,
+                          color: Color(0xFF6A6A6A),
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: 3),
                         Text(
                           '${recipe.totalTime}分',
                           style: const TextStyle(
@@ -201,14 +209,14 @@ class RecipeCard extends HookConsumerWidget {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 10),
                         // 評価
-                        Icon(
+                        const Icon(
                           Icons.star,
-                          size: 15,
-                          color: const Color(0xFFF7931E),
+                          size: 14,
+                          color: Color(0xFFF7931E),
                         ),
-                        const SizedBox(width: 4),
+                        const SizedBox(width: 3),
                         Text(
                           recipe.rating.toString(),
                           style: const TextStyle(
@@ -219,21 +227,24 @@ class RecipeCard extends HookConsumerWidget {
                         ),
                         const Spacer(),
                         // カロリー
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 3,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF8F9FA),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            '${recipe.calories}kcal',
-                            style: const TextStyle(
-                              fontSize: 10,
-                              color: Color(0xFF4A4A4A),
-                              fontWeight: FontWeight.w600,
+                        Flexible(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF8F9FA),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              '${recipe.calories}kcal',
+                              style: const TextStyle(
+                                fontSize: 10,
+                                color: Color(0xFF4A4A4A),
+                                fontWeight: FontWeight.w600,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),

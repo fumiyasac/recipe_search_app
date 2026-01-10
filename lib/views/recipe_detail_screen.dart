@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../models/recipe.dart';
 import '../viewmodels/providers.dart';
+import '../widgets/nutrition_chart.dart';
 
 class RecipeDetailScreen extends HookConsumerWidget {
   final Recipe recipe;
@@ -294,35 +295,10 @@ class RecipeDetailScreen extends HookConsumerWidget {
                   // 栄養情報
                   if (recipe.nutritionInfo != null) ...[
                     _buildSectionTitle('栄養成分（1人分）'),
+                    // グラフ表示
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Container(
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.04),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            _buildNutritionRow('タンパク質', '${recipe.nutritionInfo!.protein}g', Icons.fitness_center),
-                            const Divider(height: 24),
-                            _buildNutritionRow('脂質', '${recipe.nutritionInfo!.fat}g', Icons.opacity),
-                            const Divider(height: 24),
-                            _buildNutritionRow('炭水化物', '${recipe.nutritionInfo!.carbs}g', Icons.grain),
-                            const Divider(height: 24),
-                            _buildNutritionRow('食物繊維', '${recipe.nutritionInfo!.fiber}g', Icons.eco),
-                            const Divider(height: 24),
-                            _buildNutritionRow('塩分', '${recipe.nutritionInfo!.salt}g', Icons.water_drop),
-                          ],
-                        ),
-                      ),
+                      child: NutritionChart(nutritionInfo: recipe.nutritionInfo!),
                     ),
                     const SizedBox(height: 32),
                   ],
@@ -742,37 +718,6 @@ class RecipeDetailScreen extends HookConsumerWidget {
           letterSpacing: -0.5,
         ),
       ),
-    );
-  }
-
-  Widget _buildNutritionRow(String label, String value, IconData icon) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          color: const Color(0xFFFF6B35),
-          size: 20,
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            label,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Color(0xFF4A4A4A),
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFF1A1A1A),
-          ),
-        ),
-      ],
     );
   }
 

@@ -16,52 +16,29 @@ class RecipeListScreen extends HookConsumerWidget {
     );
 
     return Scaffold(
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            // カスタムAppBar
-            SliverAppBar(
-              floating: true,
-              backgroundColor: const Color(0xFFF8F9FA),
-              elevation: 0,
-              expandedHeight: 80,
-              flexibleSpace: FlexibleSpaceBar(
-                titlePadding: const EdgeInsets.only(left: 20, bottom: 16),
-                title: Row(
-                  children: [
-                    const Text(
-                      'Recipe',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFF1A1A1A),
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFF6B35),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: const Text(
-                        'Search',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                          letterSpacing: 0.3,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+      appBar: AppBar(
+        title: const Row(
+          children: [
+            Icon(
+              Icons.search,
+              color: Color(0xFFFF6B35),
+              size: 28,
+            ),
+            SizedBox(width: 12),
+            Text(
+              'レシピ検索',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF1A1A1A),
+                letterSpacing: -0.5,
               ),
             ),
+          ],
+        ),
+      ),
+      body: CustomScrollView(
+        slivers: [
             // フィルターセクション
             const SliverToBoxAdapter(
               child: FilterSection(),
@@ -133,12 +110,11 @@ class RecipeListScreen extends HookConsumerWidget {
                 ),
               ),
             ),
-            // 下部のパディング
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 20),
-            ),
-          ],
-        ),
+          // 下部のパディング
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 20),
+          ),
+        ],
       ),
     );
   }

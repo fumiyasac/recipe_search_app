@@ -78,7 +78,7 @@ class RecipeListScreen extends HookConsumerWidget {
                           Icon(
                             Icons.search_off,
                             size: 64,
-                            color: const Color(0xFF6A6A6A).withOpacity(0.3),
+                            color: const Color(0xFF6A6A6A).withValues(alpha: 0.3),
                           ),
                           const SizedBox(height: 16),
                           const Text(

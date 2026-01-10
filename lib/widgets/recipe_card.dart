@@ -29,7 +29,7 @@ class RecipeCard extends HookConsumerWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 20,
               offset: const Offset(0, 4),
             ),
@@ -78,7 +78,7 @@ class RecipeCard extends HookConsumerWidget {
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.15),
+                                  color: Colors.black.withValues(alpha: 0.15),
                                   blurRadius: 12,
                                   offset: const Offset(0, 2),
                                 ),
@@ -127,7 +127,7 @@ class RecipeCard extends HookConsumerWidget {
                         borderRadius: BorderRadius.circular(8),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFFF6B35).withOpacity(0.3),
+                            color: const Color(0xFFFF6B35).withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),

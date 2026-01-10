@@ -42,7 +42,7 @@ class FavoritesScreen extends HookConsumerWidget {
                   Icon(
                     Icons.favorite_border,
                     size: 80,
-                    color: const Color(0xFF6A6A6A).withOpacity(0.3),
+                    color: const Color(0xFF6A6A6A).withValues(alpha: 0.3),
                   ),
                   const SizedBox(height: 24),
                   const Text(
@@ -93,7 +93,7 @@ class FavoritesScreen extends HookConsumerWidget {
               Icon(
                 Icons.error_outline,
                 size: 64,
-                color: const Color(0xFF6A6A6A).withOpacity(0.3),
+                color: const Color(0xFF6A6A6A).withValues(alpha: 0.3),
               ),
               const SizedBox(height: 16),
               const Text(

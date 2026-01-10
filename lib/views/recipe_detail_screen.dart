@@ -29,7 +29,7 @@ class RecipeDetailScreen extends HookConsumerWidget {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
+                      color: Colors.black.withValues(alpha: 0.15),
                       blurRadius: 12,
                       offset: const Offset(0, 2),
                     ),
@@ -56,7 +56,7 @@ class RecipeDetailScreen extends HookConsumerWidget {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.15),
+                            color: Colors.black.withValues(alpha: 0.15),
                             blurRadius: 12,
                             offset: const Offset(0, 2),
                           ),
@@ -129,7 +129,7 @@ class RecipeDetailScreen extends HookConsumerWidget {
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.15),
+                              color: Colors.black.withValues(alpha: 0.15),
                               blurRadius: 20,
                               offset: const Offset(0, 4),
                             ),
@@ -272,7 +272,7 @@ class RecipeDetailScreen extends HookConsumerWidget {
                                   vertical: 8,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFFF6B35).withOpacity(0.1),
+                                  color: const Color(0xFFFF6B35).withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
                                     color: const Color(0xFFFF6B35),
@@ -305,7 +305,7 @@ class RecipeDetailScreen extends HookConsumerWidget {
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
+                            color: Colors.black.withValues(alpha: 0.04),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -365,7 +365,7 @@ class RecipeDetailScreen extends HookConsumerWidget {
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFFFF6B35).withOpacity(0.3),
+                                      color: const Color(0xFFFF6B35).withValues(alpha: 0.3),
                                       blurRadius: 8,
                                       offset: const Offset(0, 2),
                                     ),
@@ -391,7 +391,7 @@ class RecipeDetailScreen extends HookConsumerWidget {
                                     borderRadius: BorderRadius.circular(12),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withOpacity(0.04),
+                                        color: Colors.black.withValues(alpha: 0.04),
                                         blurRadius: 8,
                                         offset: const Offset(0, 2),
                                       ),
@@ -431,7 +431,7 @@ class RecipeDetailScreen extends HookConsumerWidget {
                               borderRadius: BorderRadius.circular(16),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.04),
+                                  color: Colors.black.withValues(alpha: 0.04),
                                   blurRadius: 12,
                                   offset: const Offset(0, 4),
                                 ),

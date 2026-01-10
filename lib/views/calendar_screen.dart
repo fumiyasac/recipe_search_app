@@ -89,7 +89,7 @@ class CalendarScreen extends HookConsumerWidget {
                     ),
                     calendarStyle: CalendarStyle(
                       todayDecoration: BoxDecoration(
-                        color: const Color(0xFFFF6B35).withOpacity(0.15),
+                        color: const Color(0xFFFF6B35).withValues(alpha: 0.15),
                         shape: BoxShape.circle,
                       ),
                       selectedDecoration: const BoxDecoration(
@@ -105,7 +105,7 @@ class CalendarScreen extends HookConsumerWidget {
                         fontWeight: FontWeight.w500,
                       ),
                       outsideTextStyle: TextStyle(
-                        color: const Color(0xFF6A6A6A).withOpacity(0.3),
+                        color: const Color(0xFF6A6A6A).withValues(alpha: 0.3),
                       ),
                       todayTextStyle: const TextStyle(
                         color: Color(0xFF1A1A1A),
@@ -225,7 +225,7 @@ class CalendarScreen extends HookConsumerWidget {
                 Icon(
                   Icons.error_outline,
                   size: 64,
-                  color: const Color(0xFF6A6A6A).withOpacity(0.3),
+                  color: const Color(0xFF6A6A6A).withValues(alpha: 0.3),
                 ),
                 const SizedBox(height: 16),
                 const Text(
@@ -261,7 +261,7 @@ class CalendarScreen extends HookConsumerWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 20,
               offset: const Offset(0, 4),
             ),
@@ -392,7 +392,7 @@ class CalendarScreen extends HookConsumerWidget {
               width: 60,
               height: 60,
               decoration: BoxDecoration(
-                color: const Color(0xFFFF6B35).withOpacity(0.1),
+                color: const Color(0xFFFF6B35).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Column(

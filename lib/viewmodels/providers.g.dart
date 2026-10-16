@@ -21,7 +21,7 @@ final class AppDatabaseProvider
         argument: null,
         retry: null,
         name: r'appDatabaseProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -48,7 +48,7 @@ final class AppDatabaseProvider
   }
 }
 
-String _$appDatabaseHash() => r'18ce5c8c4d8ddbfe5a7d819d8fb7d5aca76bf416';
+String _$appDatabaseHash() => r'59cce38d45eeaba199eddd097d8e149d66f9f3e1';
 
 @ProviderFor(recipeRepository)
 final recipeRepositoryProvider = RecipeRepositoryProvider._();
@@ -67,7 +67,7 @@ final class RecipeRepositoryProvider
         argument: null,
         retry: null,
         name: r'recipeRepositoryProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -94,7 +94,7 @@ final class RecipeRepositoryProvider
   }
 }
 
-String _$recipeRepositoryHash() => r'8837d075f875114d7db95bfdbc902b5edde10f3b';
+String _$recipeRepositoryHash() => r'b329413cae80fc6cda63ada413b20ea835e68750';
 
 @ProviderFor(RecipeList)
 final recipeListProvider = RecipeListProvider._();

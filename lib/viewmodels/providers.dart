@@ -7,17 +7,37 @@ import '../models/filter_state.dart';
 part 'providers.g.dart';
 
 // データベースプロバイダー
-@riverpod
+//
+// keepAlive: drift の AppDatabase は SQLite ファイルを開く長寿命のネイティブ
+// リソース。autoDispose だと参照が一時的に途切れるたびに close されないまま
+// 新しいインスタンスが生成され、同一ファイルを複数接続で開く恐れがある。
+// アプリ単位のシングルトンとして保持し、コンテナ破棄時に必ず close する。
+@Riverpod(keepAlive: true)
 AppDatabase appDatabase(Ref ref) {
-  return AppDatabase();
+  final db = AppDatabase();
+  ref.onDispose(db.close);
+  return db;
 }
 
 // レシピリポジトリプロバイダー
-@riverpod
+//
+// keepAlive: keepAlive な AppDatabase をラップするだけの状態を持たない
+// サービス。多数の Provider から watch されるため、autoDispose による
+// 生成・破棄の繰り返しを避けてシングルトンとして共有する。
+@Riverpod(keepAlive: true)
 RecipeRepository recipeRepository(Ref ref) {
   final database = ref.watch(appDatabaseProvider);
   return RecipeRepository(database);
 }
+
+// これ以降の Provider は既定の autoDispose のままにする。
+// - RecipeList / FilteredRecipes / FavoriteRecipes: 画面が参照する一時的な
+//   表示状態。画面が消えたら破棄し、次回表示時に作り直すのが自然。
+// - MonthlyRecipes(year, month) / RecipeFavoriteStatus(recipeId): family。
+//   autoDispose にして引数ごとのキャッシュが無制限に増えるのを防ぐ。
+// - RecipeFilterState / SelectedCategory / SearchQuery / SelectedTabIndex:
+//   UI 状態。MainNavigationScreen の IndexedStack が常時 listen するため
+//   実質セッション中保持され、保持すべき長寿命ネイティブリソースでもない。
 
 // 全レシピプロバイダー
 @riverpod

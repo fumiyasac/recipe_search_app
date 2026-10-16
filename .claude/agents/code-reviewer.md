@@ -21,9 +21,36 @@ tools: Read, Grep, Glob, Bash
 
 ## Riverpod チェックリスト
 
+- **リソースを保持する Provider のライフサイクル（最重要）**: データベース接続・HTTP クライアント・`StreamController`・`StreamSubscription`・`AnimationController` など、**明示的な解放（close/dispose/cancel）が必要なオブジェクトを生成・保持する Provider** を精査する。次の 2 点を**両方**満たしているか確認する。
+  1. `@Riverpod(keepAlive: true)` になっているか（既定の autoDispose だと、参照が一瞬でも途切れるたびに破棄・再生成され、同一リソースを多重に開く／リークする）。
+  2. `ref.onDispose(resource.close)`（または `dispose`/`cancel`）で後始末を登録しているか。
+  - 判定のヒント: Provider の body に `XxxDatabase()` / `http.Client()` / `StreamController()` / `...Controller()` のような生成があるのに `ref.onDispose(...)` が無ければ **Critical**。
+
+  ```dart
+  // NG: autoDispose かつ close なし。参照が途切れると DB が多重に開かれ、close もされない。
+  @riverpod
+  AppDatabase appDatabase(Ref ref) => AppDatabase();
+
+  // OK: keepAlive でシングルトン化し、破棄時に必ず close する。
+  @Riverpod(keepAlive: true)
+  AppDatabase appDatabase(Ref ref) {
+    final db = AppDatabase();
+    ref.onDispose(db.close);
+    return db;
+  }
+  ```
+
+- **autoDispose / keepAlive の選択**: 上記リソース系は keepAlive。一方、画面に紐づく一時的な表示状態や、family で引数ごとに増える Provider は autoDispose を維持する（キャッシュの無制限な増加を防ぐ）。選択理由がコメントで説明されているとなお良い。
+- **ビジネスロジックの直書き**: フィルタ・ソート・集計・検索などの**純粋ロジックが Provider の `build()` に直書き**されていないか。テスト容易性のため、`build()` は依存の取得と純粋関数の呼び出しに留め、ロジックは `lib/models/` などの副作用のない関数へ切り出す。
+  ```dart
+  // NG: 9 段のフィルタを build に直書き（Provider 経由でしかテストできない）
+  Future<List<Recipe>> build() async { final r = await repo.getAll(); /* 長い if の連続 */ return r; }
+  // OK: 純粋関数に委譲（関数単体でテストできる）
+  Future<List<Recipe>> build() async =>
+      applyFilters(await repo.getAll(), ref.watch(filterProvider));
+  ```
 - **build 内での副作用**: `build()`（Notifier/AsyncNotifier）内で `ref.read(...).notifier.xxx()` による状態変更、ナビゲーション、`state=` の直接代入などを行っていないか。build は純粋に初期状態を返すだけにする。
 - **ref.read と ref.watch の誤用**: 依存の購読は `ref.watch`、ユーザー操作に対する一回限りの読み出しは `ref.read`。`build`/widget build 内で `ref.read` を使って依存更新を取りこぼしていないか、コールバック内で `ref.watch` して不要な再実行を招いていないか。
-- **autoDispose 漏れ**: `@riverpod`（既定で autoDispose）と `@Riverpod(keepAlive: true)` の選択が妥当か。family で引数ごとに増えるキャッシュが解放されない設計になっていないか。長命にすべき DB/リポジトリと、破棄すべき一時状態の区別。
 - **invalidate の整合**: 状態変更後に関連 Provider（例: 一覧と詳細）の `invalidate` を適切に行っているか。過剰 invalidate で無駄な再取得をしていないか。
 
 ## drift チェックリスト
@@ -31,7 +58,7 @@ tools: Read, Grep, Glob, Bash
 - **メインスレッドでの重いクエリ**: 全件取得＋メモリ内フィルタ・ソート・集計をホットパス（build や頻繁なイベント）で行っていないか。件数増加でスケールしない箇所を指摘。
 - **トランザクション漏れ**: 複数の書き込み（複数テーブル／読み取り後書き込み）を 1 単位で行うべき箇所が `transaction(() async {...})` で囲まれているか。
 - **スキーマ変更の安全性**: テーブル変更時に `schemaVersion` インクリメントと `MigrationStrategy.onUpgrade` があるか（無ければ重大指摘）。
-- **リソース管理**: テスト・一時利用の DB が `close()` されているか。
+- **リソース管理**: DB を `close()` しているか。テスト・一時利用の DB だけでなく、**本番で DB を生成する Provider**（`appDatabaseProvider` など）も対象。Provider の場合は上記「リソースを保持する Provider のライフサイクル」（keepAlive + `ref.onDispose(db.close)`）で必ず確認する。
 
 ## 出力フォーマット
 

@@ -30,6 +30,10 @@ class FavoriteRecipes extends Table {
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
+  /// テスト用コンストラクタ。`NativeDatabase.memory()` などの任意の
+  /// [QueryExecutor] を注入してインメモリ DB で検証できる。
+  AppDatabase.forTesting(super.executor);
+
   @override
   int get schemaVersion => 1;
 

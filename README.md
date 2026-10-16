@@ -4,6 +4,29 @@
 
 レシピを検索・絞り込み・お気に入り登録し、カレンダーや栄養バランスで楽しむFlutter製のモバイルアプリです。レシピのマスタデータはアプリ内に同梱され、お気に入りのみdrift（SQLite）でローカルに永続化します。
 
+## このリポジトリの見どころ
+
+### UI・機能
+
+- **9 条件の複合フィルタ** — カテゴリ・キーワード・難易度(OR)・調理時間・カロリー・評価・アレルギー除外・タグ(AND)・材料(含む/除く) を組み合わせて絞り込み。ロジックは純粋関数 `applyFilters` に切り出し、テストカバレッジ 100%。
+- **カレンダー献立** — `table_calendar` で日付ごとのおすすめレシピを表示。
+- **PFC 栄養グラフ** — `fl_chart` のドーナツグラフでタンパク質・脂質・炭水化物の比率を可視化。
+
+（[スクリーンショット](#スクリーンショット)も参照）
+
+### AI 駆動開発の履歴
+
+本リポジトリは Claude Code を使い、1 PR = 1 テーマで段階的に育てています。
+
+| PR | テーマ |
+|----|--------|
+| [#1](https://github.com/fumiyasac/recipe_search_app/pull/1) | AI 駆動開発の土台（CLAUDE.md / architecture_guidance.md / README）を整備 |
+| [#2](https://github.com/fumiyasac/recipe_search_app/pull/2) | 品質ゲート（GitHub Actions / Git フック / mise / Claude 設定）を導入 |
+| [#3](https://github.com/fumiyasac/recipe_search_app/pull/3) | Claude Code の Skill / Subagent を追加（[skill_guidance.md](./skill_guidance.md)） |
+| [#4](https://github.com/fumiyasac/recipe_search_app/pull/4) | Flutter 3.47.7 と依存パッケージを安全に更新 |
+| [#5](https://github.com/fumiyasac/recipe_search_app/pull/5) | スクリーンショット掲載とネイティブビルド差分の取り込み |
+| [#6](https://github.com/fumiyasac/recipe_search_app/pull/6) | ショーケース品質化（Provider ライフサイクル修正 / フィルタ切り出し＋テスト拡充 / code-reviewer 改善 / 画面キャプチャ / ドキュメント整合）※本 PR |
+
 ## 主な機能
 
 - 🔎 **レシピ一覧・検索** — タイトル／説明文からのキーワード検索とカテゴリ切り替え
@@ -180,7 +203,18 @@ flutter test
 flutter test --coverage
 ```
 
-現在は`test/models/`にモデル（`FilterState` / `Recipe`）の単体テストを配置しています。Provider／Repositoryの単体テストや画面のウィジェットテストは今後拡充する余地があります。
+テストは役割ごとにディレクトリを分けています（計 11 ファイル / 62 ケース）。
+
+| ディレクトリ | 内容 |
+|--------------|------|
+| `test/models/` | `applyFilters`（複合フィルタ・カバレッジ 100%）、`FilterState` / `Recipe` の単体テスト |
+| `test/repositories/` | `RecipeRepository` の検索系（`searchRecipes` / `getRecipesByCategory` / `getRecipeById`）をインメモリ drift で検証（100%） |
+| `test/viewmodels/` | Provider のテスト（`FavoriteRecipes` の永続化、`AppDatabase` が dispose 時に close されること） |
+| `test/migration/` | 旧バージョンで作成した DB を開ける互換性テスト（drift/sqlite3 更新時の回帰防止） |
+| `test/views/` `test/widgets/` | レシピ一覧の検索・絞り込み、詳細フィルタシート、レシピ詳細、栄養グラフの Widget テスト |
+| `test/support/` | `NetworkImage` を差し替えるテストヘルパー（非テスト） |
+
+中核の絞り込み・検索ロジック（`applyFilters` / `RecipeRepository`）はカバレッジ 100%です。
 
 ## 品質ゲート（CI / Gitフック）
 

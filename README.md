@@ -203,7 +203,12 @@ flutter test --coverage
 | お気に入りの挙動がおかしい／DB を初期化したい | 端末のアプリデータを削除するとドキュメントディレクトリの `recipes.sqlite` が消え、初期状態に戻る |
 | 依存解決に失敗する | Flutter / Dart のバージョンが[前提条件](#前提条件)を満たしているか `flutter doctor` で確認 |
 
+## Claude Code の Skill / Subagent
+
+本リポジトリには開発を補助する Claude Code の Skill（`/codegen` `/add-feature` `/drift-schema-change` `/add-provider-test` `/doc-sync`）と Subagent（`code-reviewer` / `test-writer` / `impact-analyzer`）を同梱しています。一覧・呼び出し例・連携フローは [skill_guidance.md](./skill_guidance.md) を参照してください。
+
 ## ドキュメント
 
 - [CLAUDE.md](./CLAUDE.md) — AI エージェント／開発者向けの作業ガイド（技術スタック・コマンド・守るべきルール・コード生成トリガー）
 - [architecture_guidance.md](./architecture_guidance.md) — 詳細なアーキテクチャ解説（レイヤー構成・Provider 依存・ER 図・画面遷移図）
+- [skill_guidance.md](./skill_guidance.md) — Claude Code の Skill / Subagent 一覧と連携フロー

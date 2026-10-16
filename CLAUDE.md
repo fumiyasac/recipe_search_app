@@ -2,6 +2,8 @@
 
 このファイルは Claude Code（および他の AI エージェント）が本リポジトリで作業する際のガイドです。詳細な設計情報は [architecture_guidance.md](./architecture_guidance.md) を参照してください。
 
+> 作業補助の Skill（`/codegen` `/add-feature` `/drift-schema-change` `/add-provider-test` `/doc-sync`）と Subagent（`code-reviewer` / `test-writer` / `impact-analyzer`）を同梱しています。一覧・使い分け・連携フローは [skill_guidance.md](./skill_guidance.md) を参照してください。スキーマ変更は必ず `/drift-schema-change` の手順に従ってください。
+
 ## プロジェクト概要
 
 レシピを検索・絞り込み・お気に入り登録し、カレンダーや栄養バランスで楽しむ Flutter 製のモバイルアプリです。レシピのマスタデータはアプリ内にハードコードされており、お気に入りのみ drift（SQLite）でローカル永続化します。

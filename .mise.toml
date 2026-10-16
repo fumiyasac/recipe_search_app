@@ -1,7 +1,7 @@
 # 開発ツールのバージョン固定（mise: https://mise.jdx.dev/）
 #
-# Flutter 3.47.5（stable）は Dart 3.13.x を同梱しており、
+# Flutter 3.47.7（stable）は Dart 3.13.x を同梱しており、
 # pubspec.yaml の SDK 制約 `environment.sdk: ^3.10.4`（>=3.10.4 <4.0.0）を満たす。
 # ローカル開発・CI（.github/workflows/ci.yml）・本ファイルで同一バージョンに揃える。
 [tools]
-flutter = "3.47.5"
+flutter = "3.47.7"

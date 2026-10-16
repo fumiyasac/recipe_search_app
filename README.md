@@ -175,13 +175,12 @@ recipe_search_app/
 ├── scripts/                       # setup-hooks.sh / claude_format_hook.sh
 ├── .claude/settings.json          # Claude Code の権限・フック設定
 ├── .mise.toml                     # Flutter バージョン固定
-├── android/ ios/                  # モバイル向けネイティブプロジェクト
-├── linux/ macos/ windows/ web/    # Flutter 既定のひな形（本アプリでは未対応・動作確認なし）
+├── android/ ios/                  # モバイル向けネイティブプロジェクト（対象 OS）
 ├── analysis_options.yaml          # flutter_lints ベースの Lint 設定
 └── pubspec.yaml
 ```
 
-> `android/`と`ios/`が主なターゲットです。`linux/` `macos/` `windows/` `web/`は`flutter create`が生成した既定のひな形がコミットされているだけで、デスクトップ／Web向けの実装・動作確認は行っていません。
+> 対象は iOS / Android のモバイルのみです。デスクトップ／Web（`linux/` `macos/` `windows/` `web/`）は対象外のため、`flutter create` 既定のひな形は削除しています。必要になった場合は `flutter create --platforms=...` で再生成できます。
 
 ## アーキテクチャ
 

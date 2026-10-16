@@ -126,7 +126,7 @@ abstract class _$RecipeList extends $AsyncNotifier<List<Recipe>> {
   FutureOr<List<Recipe>> build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<AsyncValue<List<Recipe>>, List<Recipe>>;
     final element =
         ref.element
@@ -136,7 +136,7 @@ abstract class _$RecipeList extends $AsyncNotifier<List<Recipe>> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -170,7 +170,7 @@ abstract class _$FilteredRecipes extends $AsyncNotifier<List<Recipe>> {
   FutureOr<List<Recipe>> build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<AsyncValue<List<Recipe>>, List<Recipe>>;
     final element =
         ref.element
@@ -180,7 +180,7 @@ abstract class _$FilteredRecipes extends $AsyncNotifier<List<Recipe>> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -214,7 +214,7 @@ abstract class _$FavoriteRecipes extends $AsyncNotifier<List<Recipe>> {
   FutureOr<List<Recipe>> build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<AsyncValue<List<Recipe>>, List<Recipe>>;
     final element =
         ref.element
@@ -224,7 +224,7 @@ abstract class _$FavoriteRecipes extends $AsyncNotifier<List<Recipe>> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -266,7 +266,7 @@ abstract class _$RecipeFilterState extends $Notifier<FilterState> {
   FilterState build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<FilterState, FilterState>;
     final element =
         ref.element
@@ -276,7 +276,7 @@ abstract class _$RecipeFilterState extends $Notifier<FilterState> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -318,7 +318,7 @@ abstract class _$SelectedCategory extends $Notifier<String> {
   String build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<String, String>;
     final element =
         ref.element
@@ -328,7 +328,7 @@ abstract class _$SelectedCategory extends $Notifier<String> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -369,7 +369,7 @@ abstract class _$SearchQuery extends $Notifier<String> {
   String build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<String, String>;
     final element =
         ref.element
@@ -379,7 +379,7 @@ abstract class _$SearchQuery extends $Notifier<String> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -459,7 +459,7 @@ abstract class _$MonthlyRecipes extends $AsyncNotifier<Map<DateTime, Recipe>> {
   FutureOr<Map<DateTime, Recipe>> build(int year, int month);
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref =
         this.ref
             as $Ref<AsyncValue<Map<DateTime, Recipe>>, Map<DateTime, Recipe>>;
@@ -474,7 +474,7 @@ abstract class _$MonthlyRecipes extends $AsyncNotifier<Map<DateTime, Recipe>> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, () => build(_$args.$1, _$args.$2));
+    return element.handleCreate(ref, () => build(_$args.$1, _$args.$2));
   }
 }
 
@@ -554,7 +554,7 @@ abstract class _$RecipeFavoriteStatus extends $AsyncNotifier<bool> {
   FutureOr<bool> build(String recipeId);
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<AsyncValue<bool>, bool>;
     final element =
         ref.element
@@ -564,7 +564,7 @@ abstract class _$RecipeFavoriteStatus extends $AsyncNotifier<bool> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, () => build(_$args));
+    return element.handleCreate(ref, () => build(_$args));
   }
 }
 
@@ -606,7 +606,7 @@ abstract class _$SelectedTabIndex extends $Notifier<int> {
   int build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<int, int>;
     final element =
         ref.element
@@ -616,6 +616,6 @@ abstract class _$SelectedTabIndex extends $Notifier<int> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

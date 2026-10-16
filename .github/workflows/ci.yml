@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  quality:
+    name: Flutter Quality Gate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # .mise.toml と同一バージョンの Flutter（stable）をセットアップし、SDK をキャッシュする
+      - name: Setup Flutter (stable)
+        uses: subosito/flutter-action@v2.23.0
+        with:
+          flutter-version: '3.47.5'
+          channel: stable
+          cache: true
+
+      # pub の依存キャッシュ（pubspec.lock をキーに ~/.pub-cache を再利用）
+      - name: Cache pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      # 1. 依存解決
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 2. フォーマットチェック（整形差分があれば失敗）
+      - name: Format check
+        run: dart format --output=none --set-exit-if-changed .
+
+      # 3. 静的解析
+      - name: Static analysis
+        run: flutter analyze
+
+      # 4. 生成コードのコミット漏れ検出（*.g.dart をコミットする方針のため）
+      - name: Verify generated code is committed
+        run: |
+          dart run build_runner build --delete-conflicting-outputs
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error::生成コードが最新ではありません。'dart run build_runner build --delete-conflicting-outputs' を実行し、*.g.dart をコミットしてください。"
+            git status --porcelain
+            git --no-pager diff
+            exit 1
+          fi
+
+      # 5. テスト（カバレッジ付き）
+      - name: Run tests with coverage
+        run: flutter test --coverage
+
+      # カバレッジのサマリーを Job Summary に出力
+      - name: Coverage summary
+        if: always()
+        run: |
+          if [ ! -f coverage/lcov.info ]; then
+            echo "coverage/lcov.info が見つかりませんでした。" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          {
+            echo "## テストカバレッジ"
+            echo ""
+            echo "| ファイル | カバー行 | カバレッジ |"
+            echo "|----------|---------:|-----------:|"
+            awk -F: '
+              /^SF:/ { file=$2 }
+              /^LF:/ { lf=$2; total_lf+=lf }
+              /^LH:/ {
+                lh=$2; total_lh+=lh;
+                pct=(lf>0)?100*lh/lf:0;
+                printf "| %s | %d/%d | %.1f%% |\n", file, lh, lf, pct
+              }
+              END {
+                printf "| **合計** | **%d/%d** | **%.1f%%** |\n", total_lh, total_lf, (total_lf>0)?100*total_lh/total_lf:0
+              }
+            ' coverage/lcov.info
+          } >> "$GITHUB_STEP_SUMMARY"

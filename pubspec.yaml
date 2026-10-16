@@ -48,11 +48,11 @@ dependencies:
   path: ^1.9.0
 
   # UI関連
-  table_calendar: ^3.0.9
+  table_calendar: ^3.3.0
   fl_chart: ^0.69.0
 
   # ユーティリティ
-  intl: ^0.19.0
+  intl: ^0.20.2
   uuid: ^4.3.3
 
 dev_dependencies:

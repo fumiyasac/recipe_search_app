@@ -15,11 +15,19 @@
 
 ## スクリーンショット
 
-iPhone 15 Pro（iOS 17）とAndroidエミュレータで実行したホーム画面です。
+実機相当（Android エミュレータ API 36）で撮影した主要画面です。
 
-| iOS | Android |
-|:---:|:---:|
-| <img src="docs/screenshots/ios_home.png" width="300" alt="iOSホーム画面"> | <img src="docs/screenshots/android_home.png" width="300" alt="Androidホーム画面"> |
+| ホーム（一覧・検索） | 詳細フィルタ | レシピ詳細 | 栄養グラフ（PFC） | カレンダー |
+|:---:|:---:|:---:|:---:|:---:|
+| <img src="docs/screenshots/android_home.png" width="160" alt="ホーム画面"> | <img src="docs/screenshots/filter_sheet.png" width="160" alt="詳細フィルタシート"> | <img src="docs/screenshots/detail.png" width="160" alt="レシピ詳細"> | <img src="docs/screenshots/nutrition.png" width="160" alt="栄養グラフ"> | <img src="docs/screenshots/calendar.png" width="160" alt="カレンダー"> |
+
+### 操作デモ（GIF）
+
+「検索 → 詳細フィルタ適用 → レシピ詳細を開く」の操作デモです。GIF は `ffmpeg` が必要なため、[docs/screenshots/CAPTURE_GUIDE.md](docs/screenshots/CAPTURE_GUIDE.md) の手順で `docs/screenshots/demo.gif` を生成すると下に表示されます。
+
+<img src="docs/screenshots/demo.gif" width="320" alt="操作デモ GIF">
+
+> iOS（iPhone 15 Pro）でも同一 UI で動作します。各画面の撮影方法・ファイル名・GIF 生成手順は [CAPTURE_GUIDE.md](docs/screenshots/CAPTURE_GUIDE.md) を参照してください。
 
 ## 前提条件
 

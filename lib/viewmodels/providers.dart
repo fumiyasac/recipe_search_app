@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../database/database.dart';
 import '../repositories/recipe_repository.dart';
@@ -13,9 +14,15 @@ part 'providers.g.dart';
 // リソース。autoDispose だと参照が一時的に途切れるたびに close されないまま
 // 新しいインスタンスが生成され、同一ファイルを複数接続で開く恐れがある。
 // アプリ単位のシングルトンとして保持し、コンテナ破棄時に必ず close する。
+/// テストから差し替え可能な [AppDatabase] 生成関数。既定は本番のファイル DB。
+/// これにより appDatabaseProvider 本体（keepAlive + onDispose）を上書きせずに、
+/// インメモリ DB を注入して本番のライフサイクルをそのまま検証できる。
+@visibleForTesting
+AppDatabase Function() debugAppDatabaseFactory = AppDatabase.new;
+
 @Riverpod(keepAlive: true)
 AppDatabase appDatabase(Ref ref) {
-  final db = AppDatabase();
+  final db = debugAppDatabaseFactory();
   ref.onDispose(db.close);
   return db;
 }

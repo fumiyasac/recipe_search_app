@@ -164,7 +164,7 @@ final class FilteredRecipesProvider
   FilteredRecipes create() => FilteredRecipes();
 }
 
-String _$filteredRecipesHash() => r'dc688cca8546c44fb854921ef6fb523e92cbecc1';
+String _$filteredRecipesHash() => r'c21a2d840cd61cd6153536f8eecffe88aa0e7043';
 
 abstract class _$FilteredRecipes extends $AsyncNotifier<List<Recipe>> {
   FutureOr<List<Recipe>> build();

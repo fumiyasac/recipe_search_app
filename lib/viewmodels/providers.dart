@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../database/database.dart';
 import '../repositories/recipe_repository.dart';
 import '../models/recipe.dart';
+import '../models/recipe_filter.dart';
 import '../models/filter_state.dart';
 
 part 'providers.g.dart';
@@ -65,105 +66,11 @@ class FilteredRecipes extends _$FilteredRecipes {
     final repository = ref.watch(recipeRepositoryProvider);
     final filterState = ref.watch(recipeFilterStateProvider);
 
-    var recipes = await repository.getAllRecipes();
+    final recipes = await repository.getAllRecipes();
 
-    // 1. カテゴリフィルタ
-    if (filterState.category != 'すべて') {
-      recipes = recipes
-          .where((r) => r.category == filterState.category)
-          .toList();
-    }
-
-    // 2. 検索クエリフィルタ
-    if (filterState.searchQuery.isNotEmpty) {
-      recipes = recipes.where((recipe) {
-        return recipe.title.toLowerCase().contains(
-              filterState.searchQuery.toLowerCase(),
-            ) ||
-            recipe.description.toLowerCase().contains(
-              filterState.searchQuery.toLowerCase(),
-            );
-      }).toList();
-    }
-
-    // 3. 難易度フィルタ（OR条件）
-    if (filterState.difficulties.isNotEmpty) {
-      recipes = recipes
-          .where((r) => filterState.difficulties.contains(r.difficulty))
-          .toList();
-    }
-
-    // 4. 調理時間フィルタ
-    if (filterState.cookingTimeRange != null) {
-      recipes = recipes
-          .where((r) => r.totalTime <= filterState.cookingTimeRange!.maxMinutes)
-          .toList();
-    }
-
-    // 5. カロリーフィルタ
-    if (filterState.calorieRange != null) {
-      recipes = recipes
-          .where((r) => r.calories <= filterState.calorieRange!.maxCalories)
-          .toList();
-    }
-
-    // 6. 評価フィルタ
-    if (filterState.minRating != null) {
-      recipes = recipes
-          .where((r) => r.rating >= filterState.minRating!)
-          .toList();
-    }
-
-    // 7. アレルギー除外フィルタ（AND条件: 指定アレルギーを含まない）
-    if (filterState.excludedAllergies.isNotEmpty) {
-      recipes = recipes
-          .where(
-            (r) => !r.allergies.any(
-              (a) => filterState.excludedAllergies.contains(a),
-            ),
-          )
-          .toList();
-    }
-
-    // 8. タグフィルタ（AND条件: すべてのタグを含む）
-    if (filterState.selectedTags.isNotEmpty) {
-      recipes = recipes
-          .where(
-            (r) =>
-                filterState.selectedTags.every((tag) => r.tags.contains(tag)),
-          )
-          .toList();
-    }
-
-    // 9. 材料フィルタ
-    if (filterState.ingredientFilter != null) {
-      if (filterState.ingredientFilter!.mustInclude.isNotEmpty) {
-        recipes = recipes
-            .where(
-              (r) => filterState.ingredientFilter!.mustInclude.every(
-                (ingredient) => r.ingredients.any(
-                  (i) => i.toLowerCase().contains(ingredient.toLowerCase()),
-                ),
-              ),
-            )
-            .toList();
-      }
-
-      if (filterState.ingredientFilter!.mustExclude.isNotEmpty) {
-        recipes = recipes
-            .where(
-              (r) => !r.ingredients.any(
-                (i) => filterState.ingredientFilter!.mustExclude.any(
-                  (ingredient) =>
-                      i.toLowerCase().contains(ingredient.toLowerCase()),
-                ),
-              ),
-            )
-            .toList();
-      }
-    }
-
-    return recipes;
+    // 絞り込みロジックは副作用のない純粋関数 applyFilters に切り出している
+    // （lib/models/recipe_filter.dart）。テスト容易性のため Provider は呼ぶだけ。
+    return applyFilters(recipes, filterState);
   }
 }
 

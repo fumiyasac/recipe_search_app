@@ -25,7 +25,7 @@ recipe_search_app に導入した Claude Code の **Skill**（`.claude/skills/<n
 
 | エージェント | tools | 役割 | 権限 |
 |--------------|-------|------|------|
-| [`code-reviewer`](.claude/agents/code-reviewer.md) | Read, Grep, Glob, Bash | 差分をレビューし、Riverpod のアンチパターン（build 内副作用 / ref.read・watch 誤用 / autoDispose 漏れ）と drift の誤用（メインスレッドの重いクエリ / トランザクション漏れ）を指摘 | 読み取り専用 |
+| [`code-reviewer`](.claude/agents/code-reviewer.md) | Read, Grep, Glob, Bash | 差分をレビューし、Riverpod のアンチパターン（**リソース保持 Provider のライフサイクル=keepAlive+ref.onDispose** / build 内副作用 / ビジネスロジックの直書き / ref.read・watch 誤用）と drift の誤用（重いクエリ / トランザクション漏れ / DB の close 漏れ）を指摘 | 読み取り専用 |
 | [`test-writer`](.claude/agents/test-writer.md) | Read, Grep, Glob, Edit, Write, Bash | 指定ファイルのテストを作成し `flutter test` が通るまで修正 | 書き込み可 |
 | [`impact-analyzer`](.claude/agents/impact-analyzer.md) | Read, Grep, Glob | 変更対象を参照している箇所を洗い出し、影響範囲レポートを返す | 読み取り専用 |
 

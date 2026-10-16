@@ -59,7 +59,7 @@ graph TD
 | パス | 責務 | 主な中身 |
 |------|------|----------|
 | `lib/main.dart` | エントリポイント | `ProviderScope`、`MaterialApp`（Material 3、シードカラー `#FF6B35`）、`home: MainNavigationScreen` |
-| `lib/models/` | ドメイン／状態モデル（手書き、freezed 未使用） | `recipe.dart`（`Recipe` / `RecipeStep` / `RecipeComment` / `NutritionInfo`）、`filter_state.dart`（`FilterState` / `IngredientFilter` / `CookingTimeRange` / `CalorieRange`） |
+| `lib/models/` | ドメイン／状態モデル（手書き、freezed 未使用）と純粋ロジック | `recipe.dart`（`Recipe` / `RecipeStep` / `RecipeComment` / `NutritionInfo`）、`filter_state.dart`（`FilterState` / `IngredientFilter` / `CookingTimeRange` / `CalorieRange`）、`recipe_filter.dart`（`applyFilters` — 9 段階の複合フィルタの純粋関数） |
 | `lib/database/` | drift による永続化 | `FavoriteRecipes` テーブル、`AppDatabase`、生成物 `database.g.dart` |
 | `lib/repositories/` | データソースの集約窓口 | `RecipeRepository`（サンプルレシピ + お気に入り DB の橋渡し、絞り込み・検索ヘルパー） |
 | `lib/viewmodels/` | 状態管理 | `providers.dart`（`@riverpod` 定義）、生成物 `providers.g.dart` |
@@ -76,9 +76,10 @@ graph TD
 
 すべての Provider は `riverpod_annotation` の `@riverpod` アノテーションでコード生成しています（`providers.g.dart`）。手書き Provider は使用していません。
 
-- **関数プロバイダー**: `appDatabase` / `recipeRepository`（インスタンスを提供）
+- **関数プロバイダー**: `appDatabase` / `recipeRepository`（インスタンスを提供）。DB は長寿命リソースのため **`@Riverpod(keepAlive: true)`** とし、`appDatabase` は `ref.onDispose(db.close)` で破棄時に接続を閉じる。それ以外の Provider は既定の autoDispose。
 - **同期 Notifier**: `RecipeFilterState`（`FilterState`）、`SelectedCategory`、`SearchQuery`、`SelectedTabIndex`
 - **非同期 AsyncNotifier（`Future` を `build`）**: `RecipeList`、`FilteredRecipes`、`FavoriteRecipes`、`MonthlyRecipes`（family: year, month）、`RecipeFavoriteStatus`（family: recipeId）
+- `FilteredRecipes.build()` は複合フィルタを自前で持たず、純粋関数 `applyFilters`（`lib/models/recipe_filter.dart`）に委譲する（テスト容易性のため）。
 - UI 側は `HookConsumerWidget` で `ref.watch` し、`useState` / `useTextEditingController` などの Hooks でローカル状態を扱う。
 
 ```mermaid

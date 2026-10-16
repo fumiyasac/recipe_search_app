@@ -32,9 +32,24 @@ metadata:
 | スキル一覧 | `.claude/skills/*/SKILL.md` | skill_guidance.md の表、README/CLAUDE のリンク |
 | テスト構成 | `test/` | README テスト節 |
 
+### テスト構成とドキュメントの突き合わせ（必須チェック）
+
+README の「テスト」節は実態と乖離しやすいので、必ず次の手順で突き合わせる。
+
+1. 実際の構成を列挙する:
+   ```bash
+   find test -name '*_test.dart' | sed 's|/[^/]*$||' | sort | uniq -c   # ディレクトリ別のテスト数
+   find test -name '*_test.dart' | wc -l                                 # テストファイル総数
+   flutter test 2>&1 | tail -1                                           # テストケース総数（+NN）
+   ```
+2. README のテスト節が挙げているディレクトリ・内容と比較する。
+   - **NG 例**: 実際は `test/{models,migration,repositories,viewmodels,views,widgets}/` があるのに README が「`test/models/` のみ」と書いている。
+   - 乖離（ディレクトリの増減、テスト種別の不足、件数の記載が古い）を差分として報告する。
+3. `--fix` では、存在するテストディレクトリとその役割（モデル / マイグレーション / リポジトリ / Provider / 画面ウィジェット）を README に反映する。
+
 ## 手順
 
-1. 上表の情報源を読み、現在の事実を列挙する（例: Provider 名の集合、テーブルのカラム、schemaVersion、依存バージョン、スキル数）。
+1. 上表の情報源を読み、現在の事実を列挙する（例: Provider 名の集合、テーブルのカラム、schemaVersion、依存バージョン、スキル数、**テストのディレクトリ構成とファイル数・ケース数**）。
 2. 対応するドキュメント記述を読み、差分（追加・削除・名称変更・数の不一致・バージョン相違）を分類する。
 3. `--check`: 差分を一覧で報告して終了（ファイルは変更しない）。
 4. `--fix`: 事実に合わせてドキュメントを Edit で更新する。Mermaid 図のノードやラベルもコードに合わせる。

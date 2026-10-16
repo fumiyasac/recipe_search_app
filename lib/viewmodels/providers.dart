@@ -1,23 +1,51 @@
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../database/database.dart';
 import '../repositories/recipe_repository.dart';
 import '../models/recipe.dart';
+import '../models/recipe_filter.dart';
 import '../models/filter_state.dart';
 
 part 'providers.g.dart';
 
 // データベースプロバイダー
-@riverpod
+//
+// keepAlive: drift の AppDatabase は SQLite ファイルを開く長寿命のネイティブ
+// リソース。autoDispose だと参照が一時的に途切れるたびに close されないまま
+// 新しいインスタンスが生成され、同一ファイルを複数接続で開く恐れがある。
+// アプリ単位のシングルトンとして保持し、コンテナ破棄時に必ず close する。
+/// テストから差し替え可能な [AppDatabase] 生成関数。既定は本番のファイル DB。
+/// これにより appDatabaseProvider 本体（keepAlive + onDispose）を上書きせずに、
+/// インメモリ DB を注入して本番のライフサイクルをそのまま検証できる。
+@visibleForTesting
+AppDatabase Function() debugAppDatabaseFactory = AppDatabase.new;
+
+@Riverpod(keepAlive: true)
 AppDatabase appDatabase(Ref ref) {
-  return AppDatabase();
+  final db = debugAppDatabaseFactory();
+  ref.onDispose(db.close);
+  return db;
 }
 
 // レシピリポジトリプロバイダー
-@riverpod
+//
+// keepAlive: keepAlive な AppDatabase をラップするだけの状態を持たない
+// サービス。多数の Provider から watch されるため、autoDispose による
+// 生成・破棄の繰り返しを避けてシングルトンとして共有する。
+@Riverpod(keepAlive: true)
 RecipeRepository recipeRepository(Ref ref) {
   final database = ref.watch(appDatabaseProvider);
   return RecipeRepository(database);
 }
+
+// これ以降の Provider は既定の autoDispose のままにする。
+// - RecipeList / FilteredRecipes / FavoriteRecipes: 画面が参照する一時的な
+//   表示状態。画面が消えたら破棄し、次回表示時に作り直すのが自然。
+// - MonthlyRecipes(year, month) / RecipeFavoriteStatus(recipeId): family。
+//   autoDispose にして引数ごとのキャッシュが無制限に増えるのを防ぐ。
+// - RecipeFilterState / SelectedCategory / SearchQuery / SelectedTabIndex:
+//   UI 状態。MainNavigationScreen の IndexedStack が常時 listen するため
+//   実質セッション中保持され、保持すべき長寿命ネイティブリソースでもない。
 
 // 全レシピプロバイダー
 @riverpod
@@ -45,105 +73,11 @@ class FilteredRecipes extends _$FilteredRecipes {
     final repository = ref.watch(recipeRepositoryProvider);
     final filterState = ref.watch(recipeFilterStateProvider);
 
-    var recipes = await repository.getAllRecipes();
+    final recipes = await repository.getAllRecipes();
 
-    // 1. カテゴリフィルタ
-    if (filterState.category != 'すべて') {
-      recipes = recipes
-          .where((r) => r.category == filterState.category)
-          .toList();
-    }
-
-    // 2. 検索クエリフィルタ
-    if (filterState.searchQuery.isNotEmpty) {
-      recipes = recipes.where((recipe) {
-        return recipe.title.toLowerCase().contains(
-              filterState.searchQuery.toLowerCase(),
-            ) ||
-            recipe.description.toLowerCase().contains(
-              filterState.searchQuery.toLowerCase(),
-            );
-      }).toList();
-    }
-
-    // 3. 難易度フィルタ（OR条件）
-    if (filterState.difficulties.isNotEmpty) {
-      recipes = recipes
-          .where((r) => filterState.difficulties.contains(r.difficulty))
-          .toList();
-    }
-
-    // 4. 調理時間フィルタ
-    if (filterState.cookingTimeRange != null) {
-      recipes = recipes
-          .where((r) => r.totalTime <= filterState.cookingTimeRange!.maxMinutes)
-          .toList();
-    }
-
-    // 5. カロリーフィルタ
-    if (filterState.calorieRange != null) {
-      recipes = recipes
-          .where((r) => r.calories <= filterState.calorieRange!.maxCalories)
-          .toList();
-    }
-
-    // 6. 評価フィルタ
-    if (filterState.minRating != null) {
-      recipes = recipes
-          .where((r) => r.rating >= filterState.minRating!)
-          .toList();
-    }
-
-    // 7. アレルギー除外フィルタ（AND条件: 指定アレルギーを含まない）
-    if (filterState.excludedAllergies.isNotEmpty) {
-      recipes = recipes
-          .where(
-            (r) => !r.allergies.any(
-              (a) => filterState.excludedAllergies.contains(a),
-            ),
-          )
-          .toList();
-    }
-
-    // 8. タグフィルタ（AND条件: すべてのタグを含む）
-    if (filterState.selectedTags.isNotEmpty) {
-      recipes = recipes
-          .where(
-            (r) =>
-                filterState.selectedTags.every((tag) => r.tags.contains(tag)),
-          )
-          .toList();
-    }
-
-    // 9. 材料フィルタ
-    if (filterState.ingredientFilter != null) {
-      if (filterState.ingredientFilter!.mustInclude.isNotEmpty) {
-        recipes = recipes
-            .where(
-              (r) => filterState.ingredientFilter!.mustInclude.every(
-                (ingredient) => r.ingredients.any(
-                  (i) => i.toLowerCase().contains(ingredient.toLowerCase()),
-                ),
-              ),
-            )
-            .toList();
-      }
-
-      if (filterState.ingredientFilter!.mustExclude.isNotEmpty) {
-        recipes = recipes
-            .where(
-              (r) => !r.ingredients.any(
-                (i) => filterState.ingredientFilter!.mustExclude.any(
-                  (ingredient) =>
-                      i.toLowerCase().contains(ingredient.toLowerCase()),
-                ),
-              ),
-            )
-            .toList();
-      }
-    }
-
-    return recipes;
+    // 絞り込みロジックは副作用のない純粋関数 applyFilters に切り出している
+    // （lib/models/recipe_filter.dart）。テスト容易性のため Provider は呼ぶだけ。
+    return applyFilters(recipes, filterState);
   }
 }
 

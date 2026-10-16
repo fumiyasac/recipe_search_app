@@ -14,11 +14,7 @@ class FavoritesScreen extends HookConsumerWidget {
       appBar: AppBar(
         title: const Row(
           children: [
-            Icon(
-              Icons.favorite,
-              color: Color(0xFFFF6B35),
-              size: 28,
-            ),
+            Icon(Icons.favorite, color: Color(0xFFFF6B35), size: 28),
             SizedBox(width: 12),
             Text(
               'お気に入り',

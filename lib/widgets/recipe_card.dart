@@ -7,10 +7,7 @@ import '../views/recipe_detail_screen.dart';
 class RecipeCard extends HookConsumerWidget {
   final Recipe recipe;
 
-  const RecipeCard({
-    super.key,
-    required this.recipe,
-  });
+  const RecipeCard({super.key, required this.recipe});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -64,7 +61,9 @@ class RecipeCard extends HookConsumerWidget {
                     right: 12,
                     child: Consumer(
                       builder: (context, watch, child) {
-                        final isFavoriteAsync = ref.watch(recipeFavoriteStatusProvider(recipe.id));
+                        final isFavoriteAsync = ref.watch(
+                          recipeFavoriteStatusProvider(recipe.id),
+                        );
                         return GestureDetector(
                           onTap: () async {
                             await ref
@@ -86,7 +85,9 @@ class RecipeCard extends HookConsumerWidget {
                             ),
                             child: isFavoriteAsync.when(
                               data: (isFavorite) => Icon(
-                                isFavorite ? Icons.favorite : Icons.favorite_border,
+                                isFavorite
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
                                 color: isFavorite
                                     ? const Color(0xFFFF6B35)
                                     : const Color(0xFF6A6A6A),
@@ -97,11 +98,15 @@ class RecipeCard extends HookConsumerWidget {
                                 height: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF6B35)),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Color(0xFFFF6B35),
+                                  ),
                                 ),
                               ),
                               error: (error, stack) => Icon(
-                                recipe.isFavorite ? Icons.favorite : Icons.favorite_border,
+                                recipe.isFavorite
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
                                 color: recipe.isFavorite
                                     ? const Color(0xFFFF6B35)
                                     : const Color(0xFF6A6A6A),
@@ -127,7 +132,9 @@ class RecipeCard extends HookConsumerWidget {
                         borderRadius: BorderRadius.circular(8),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFFF6B35).withValues(alpha: 0.3),
+                            color: const Color(
+                              0xFFFF6B35,
+                            ).withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),

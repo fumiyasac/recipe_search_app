@@ -1,0 +1,17 @@
+#!/bin/sh
+# pre-commit: ステージされた .dart ファイルを dart format で整形し、再ステージする。
+# 生成ファイル（*.g.dart）は除外する。
+# CI の `dart format --set-exit-if-changed .` を事前に満たすのが目的。
+
+# ステージ済みの .dart ファイル（追加/コピー/変更/リネーム対象、*.g.dart を除く）
+staged_dart_files=$(git diff --cached --name-only --diff-filter=ACMR -- '*.dart' | grep -v '\.g\.dart$')
+
+if [ -z "$staged_dart_files" ]; then
+  exit 0
+fi
+
+# 整形して再ステージ
+echo "$staged_dart_files" | xargs dart format
+echo "$staged_dart_files" | xargs git add
+
+exit 0

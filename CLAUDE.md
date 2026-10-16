@@ -23,6 +23,18 @@
 | Lint | flutter_lints | ^6.0.0 |
 | コード生成基盤 | build_runner | ^2.4.8 |
 
+## セットアップ
+
+```bash
+# ツールバージョンの導入（mise 利用時。.mise.toml で Flutter 3.47.5 を固定）
+mise install
+# Git フックの有効化（初回のみ。コミット時に dart format を自動実行）
+sh scripts/setup-hooks.sh
+# 依存解決 → コード生成
+flutter pub get
+dart run build_runner build --delete-conflicting-outputs
+```
+
 ## よく使うコマンド
 
 ```bash
@@ -37,16 +49,20 @@ dart run build_runner watch --delete-conflicting-outputs
 # 静的解析
 flutter analyze
 
-# フォーマット（チェックのみ／書き込み）
-dart format --output=none --set-exit-if-changed lib/
-dart format lib/
+# フォーマット（チェックのみ／書き込み。CI は全体を対象にする）
+dart format --output=none --set-exit-if-changed .
+dart format .
 
 # テスト
 flutter test
+# カバレッジ出力（coverage/lcov.info を生成）
+flutter test --coverage
 
 # 実行
 flutter run
 ```
+
+> 品質ゲート: `main` への push と PR で GitHub Actions（`.github/workflows/ci.yml`）がフォーマット・解析・生成物のコミット漏れ検出・テストを実行する。ローカルでも上記コマンドで同じチェックを再現できる。詳細は [README.md](./README.md) の「品質ゲート（CI / Git フック）」を参照。
 
 ## アーキテクチャの要点
 

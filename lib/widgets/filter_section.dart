@@ -34,10 +34,7 @@ class FilterSection extends HookConsumerWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: const Color(0xFFE0E0E0),
-                width: 1,
-              ),
+              border: Border.all(color: const Color(0xFFE0E0E0), width: 1),
             ),
             child: TextField(
               controller: searchController,
@@ -96,15 +93,21 @@ class FilterSection extends HookConsumerWidget {
                       category,
                       style: TextStyle(
                         fontSize: 13,
-                        color: isSelected ? Colors.white : const Color(0xFF6A6A6A),
-                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                        color: isSelected
+                            ? Colors.white
+                            : const Color(0xFF6A6A6A),
+                        fontWeight: isSelected
+                            ? FontWeight.w700
+                            : FontWeight.w600,
                         letterSpacing: 0.2,
                       ),
                     ),
                     selected: isSelected,
                     onSelected: (selected) {
                       if (selected) {
-                        ref.read(selectedCategoryProvider.notifier).update(category);
+                        ref
+                            .read(selectedCategoryProvider.notifier)
+                            .update(category);
                       }
                     },
                     selectedColor: const Color(0xFFFF6B35),
@@ -112,7 +115,9 @@ class FilterSection extends HookConsumerWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                       side: BorderSide(
-                        color: isSelected ? const Color(0xFFFF6B35) : const Color(0xFFE0E0E0),
+                        color: isSelected
+                            ? const Color(0xFFFF6B35)
+                            : const Color(0xFFE0E0E0),
                         width: 1.5,
                       ),
                     ),
@@ -153,7 +158,10 @@ class FilterSection extends HookConsumerWidget {
                   if (activeCount > 0) ...[
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFFF6B35),
                         borderRadius: BorderRadius.circular(12),
@@ -175,7 +183,10 @@ class FilterSection extends HookConsumerWidget {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
               ),
             ),
           ),

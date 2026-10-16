@@ -5,20 +5,22 @@ import '../models/recipe.dart';
 class NutritionChart extends StatelessWidget {
   final NutritionInfo nutritionInfo;
 
-  const NutritionChart({
-    super.key,
-    required this.nutritionInfo,
-  });
+  const NutritionChart({super.key, required this.nutritionInfo});
 
   @override
   Widget build(BuildContext context) {
     // 三大栄養素の合計を計算
-    final total = nutritionInfo.protein + nutritionInfo.fat + nutritionInfo.carbs;
+    final total =
+        nutritionInfo.protein + nutritionInfo.fat + nutritionInfo.carbs;
 
     // 各栄養素の割合を計算
-    final proteinPercentage = total > 0 ? (nutritionInfo.protein / total * 100) : 0.0;
+    final proteinPercentage = total > 0
+        ? (nutritionInfo.protein / total * 100)
+        : 0.0;
     final fatPercentage = total > 0 ? (nutritionInfo.fat / total * 100) : 0.0;
-    final carbsPercentage = total > 0 ? (nutritionInfo.carbs / total * 100) : 0.0;
+    final carbsPercentage = total > 0
+        ? (nutritionInfo.carbs / total * 100)
+        : 0.0;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -71,17 +73,44 @@ class NutritionChart extends StatelessWidget {
               final isTinyScreen = screenWidth < 340;
 
               // 画面サイズに応じたサイズ調整（さらに小さく）
-              final chartSize = isTinyScreen ? 100.0 : (isSmallScreen ? 110.0 : 120.0);
-              final centerSpaceRadius = isTinyScreen ? 25.0 : (isSmallScreen ? 28.0 : 32.0);
-              final radius = isTinyScreen ? 32.0 : (isSmallScreen ? 35.0 : 38.0);
-              final titleFontSize = isTinyScreen ? 8.0 : (isSmallScreen ? 9.0 : 10.0);
+              final chartSize = isTinyScreen
+                  ? 100.0
+                  : (isSmallScreen ? 110.0 : 120.0);
+              final centerSpaceRadius = isTinyScreen
+                  ? 25.0
+                  : (isSmallScreen ? 28.0 : 32.0);
+              final radius = isTinyScreen
+                  ? 32.0
+                  : (isSmallScreen ? 35.0 : 38.0);
+              final titleFontSize = isTinyScreen
+                  ? 8.0
+                  : (isSmallScreen ? 9.0 : 10.0);
 
               // 小画面では縦並び、それ以外は横並び
-              final useVerticalLayout = screenWidth < 340 || availableWidth < 280;
+              final useVerticalLayout =
+                  screenWidth < 340 || availableWidth < 280;
 
               return useVerticalLayout
-                  ? _buildVerticalLayout(chartSize, centerSpaceRadius, radius, titleFontSize, proteinPercentage, fatPercentage, carbsPercentage, isTinyScreen)
-                  : _buildHorizontalLayout(chartSize, centerSpaceRadius, radius, titleFontSize, proteinPercentage, fatPercentage, carbsPercentage, isSmallScreen);
+                  ? _buildVerticalLayout(
+                      chartSize,
+                      centerSpaceRadius,
+                      radius,
+                      titleFontSize,
+                      proteinPercentage,
+                      fatPercentage,
+                      carbsPercentage,
+                      isTinyScreen,
+                    )
+                  : _buildHorizontalLayout(
+                      chartSize,
+                      centerSpaceRadius,
+                      radius,
+                      titleFontSize,
+                      proteinPercentage,
+                      fatPercentage,
+                      carbsPercentage,
+                      isSmallScreen,
+                    );
             },
           ),
           const SizedBox(height: 16),
@@ -126,7 +155,16 @@ class NutritionChart extends StatelessWidget {
     );
   }
 
-  Widget _buildHorizontalLayout(double chartSize, double centerSpaceRadius, double radius, double titleFontSize, double proteinPercentage, double fatPercentage, double carbsPercentage, bool isSmallScreen) {
+  Widget _buildHorizontalLayout(
+    double chartSize,
+    double centerSpaceRadius,
+    double radius,
+    double titleFontSize,
+    double proteinPercentage,
+    double fatPercentage,
+    double carbsPercentage,
+    bool isSmallScreen,
+  ) {
     return Row(
       children: [
         // 円グラフ
@@ -136,7 +174,14 @@ class NutritionChart extends StatelessWidget {
             child: SizedBox(
               height: chartSize,
               width: chartSize,
-              child: _buildPieChart(centerSpaceRadius, radius, titleFontSize, proteinPercentage, fatPercentage, carbsPercentage),
+              child: _buildPieChart(
+                centerSpaceRadius,
+                radius,
+                titleFontSize,
+                proteinPercentage,
+                fatPercentage,
+                carbsPercentage,
+              ),
             ),
           ),
         ),
@@ -176,7 +221,16 @@ class NutritionChart extends StatelessWidget {
     );
   }
 
-  Widget _buildVerticalLayout(double chartSize, double centerSpaceRadius, double radius, double titleFontSize, double proteinPercentage, double fatPercentage, double carbsPercentage, bool isTinyScreen) {
+  Widget _buildVerticalLayout(
+    double chartSize,
+    double centerSpaceRadius,
+    double radius,
+    double titleFontSize,
+    double proteinPercentage,
+    double fatPercentage,
+    double carbsPercentage,
+    bool isTinyScreen,
+  ) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -185,7 +239,14 @@ class NutritionChart extends StatelessWidget {
           child: SizedBox(
             height: chartSize,
             width: chartSize,
-            child: _buildPieChart(centerSpaceRadius, radius, titleFontSize, proteinPercentage, fatPercentage, carbsPercentage),
+            child: _buildPieChart(
+              centerSpaceRadius,
+              radius,
+              titleFontSize,
+              proteinPercentage,
+              fatPercentage,
+              carbsPercentage,
+            ),
           ),
         ),
         const SizedBox(height: 12),
@@ -214,7 +275,14 @@ class NutritionChart extends StatelessWidget {
     );
   }
 
-  Widget _buildPieChart(double centerSpaceRadius, double radius, double titleFontSize, double proteinPercentage, double fatPercentage, double carbsPercentage) {
+  Widget _buildPieChart(
+    double centerSpaceRadius,
+    double radius,
+    double titleFontSize,
+    double proteinPercentage,
+    double fatPercentage,
+    double carbsPercentage,
+  ) {
     return PieChart(
       PieChartData(
         sectionsSpace: 2,
@@ -283,7 +351,12 @@ class NutritionChart extends StatelessWidget {
     );
   }
 
-  Widget _buildLegendItem(String label, String value, Color color, bool isSmallScreen) {
+  Widget _buildLegendItem(
+    String label,
+    String value,
+    Color color,
+    bool isSmallScreen,
+  ) {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: isSmallScreen ? 6 : 8,
@@ -292,10 +365,7 @@ class NutritionChart extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: color.withValues(alpha: 0.2),
-          width: 1,
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
       ),
       child: Row(
         children: [
@@ -414,10 +484,7 @@ class NutritionChart extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: color.withValues(alpha: 0.15),
-          width: 1,
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.15), width: 1),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -428,11 +495,7 @@ class NutritionChart extends StatelessWidget {
               color: color.withValues(alpha: 0.15),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 16,
-            ),
+            child: Icon(icon, color: color, size: 16),
           ),
           const SizedBox(width: 6),
           Expanded(

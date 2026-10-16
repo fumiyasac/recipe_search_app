@@ -1,0 +1,41 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter pub get)",
+      "Bash(flutter pub outdated)",
+      "Bash(flutter analyze)",
+      "Bash(flutter analyze:*)",
+      "Bash(flutter test:*)",
+      "Bash(flutter doctor:*)",
+      "Bash(flutter --version)",
+      "Bash(dart --version)",
+      "Bash(dart format:*)",
+      "Bash(dart analyze:*)",
+      "Bash(dart run build_runner:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git branch:*)"
+    ],
+    "deny": [
+      "Bash(git push --force:*)",
+      "Bash(git push --force-with-lease:*)",
+      "Bash(git push -f:*)",
+      "Bash(rm -rf:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh \"$CLAUDE_PROJECT_DIR/scripts/claude_format_hook.sh\""
+          }
+        ]
+      }
+    ]
+  }
+}

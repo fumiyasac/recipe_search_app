@@ -15,7 +15,8 @@ class RecipeRepository {
         id: '1',
         title: '和風カルボナーラ',
         description: '醤油と出汁が香る新感覚のカルボナーラ。クリーミーで濃厚な味わい',
-        imageUrl: 'https://images.unsplash.com/photo-1612874742237-6526221588e3?w=800',
+        imageUrl:
+            'https://images.unsplash.com/photo-1612874742237-6526221588e3?w=800',
         category: '和食',
         prepTime: 10,
         cookTime: 15,
@@ -64,7 +65,8 @@ class RecipeRepository {
         id: '2',
         title: 'トマトとモッツァレラのカプレーゼ',
         description: '新鮮なトマトとモッツァレラチーズのシンプルな前菜',
-        imageUrl: 'https://images.unsplash.com/photo-1608897013039-887f21d8c804?w=800',
+        imageUrl:
+            'https://images.unsplash.com/photo-1608897013039-887f21d8c804?w=800',
         category: 'イタリアン',
         prepTime: 5,
         cookTime: 0,
@@ -103,7 +105,8 @@ class RecipeRepository {
         id: '3',
         title: 'チキンテリヤキ丼',
         description: 'ジューシーな照り焼きチキンがご飯にぴったり',
-        imageUrl: 'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=800',
+        imageUrl:
+            'https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=800',
         category: '和食',
         prepTime: 15,
         cookTime: 20,
@@ -153,7 +156,8 @@ class RecipeRepository {
         id: '4',
         title: 'マルゲリータピザ',
         description: 'トマトソースとモッツァレラチーズのシンプルな本格ピザ',
-        imageUrl: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=800',
+        imageUrl:
+            'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=800',
         category: 'イタリアン',
         prepTime: 90,
         cookTime: 15,
@@ -196,7 +200,8 @@ class RecipeRepository {
         id: '5',
         title: 'シーフードパエリア',
         description: 'エビとムール貝の旨味が詰まった本格パエリア',
-        imageUrl: 'https://images.unsplash.com/photo-1534080564583-6be75777b70a?w=800',
+        imageUrl:
+            'https://images.unsplash.com/photo-1534080564583-6be75777b70a?w=800',
         category: 'スペイン料理',
         prepTime: 25,
         cookTime: 30,
@@ -239,7 +244,8 @@ class RecipeRepository {
         id: '6',
         title: 'ガパオライス',
         description: 'タイの定番料理。バジルの香りが食欲をそそる',
-        imageUrl: 'https://images.unsplash.com/photo-1569562211093-4ed0d0758f12?w=800',
+        imageUrl:
+            'https://images.unsplash.com/photo-1569562211093-4ed0d0758f12?w=800',
         category: 'タイ料理',
         prepTime: 15,
         cookTime: 10,
@@ -282,7 +288,8 @@ class RecipeRepository {
         id: '7',
         title: 'サーモンのムニエル',
         description: 'バターの香りが広がる上品な一皿',
-        imageUrl: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800',
+        imageUrl:
+            'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800',
         category: 'フレンチ',
         prepTime: 10,
         cookTime: 15,
@@ -321,7 +328,8 @@ class RecipeRepository {
         id: '8',
         title: 'ビーフストロガノフ',
         description: 'ロシアの伝統料理。牛肉とサワークリームの絶妙なハーモニー',
-        imageUrl: 'https://images.unsplash.com/photo-1588137378633-dea1336ce1e2?w=800',
+        imageUrl:
+            'https://images.unsplash.com/photo-1588137378633-dea1336ce1e2?w=800',
         category: 'ロシア料理',
         prepTime: 20,
         cookTime: 30,
@@ -362,7 +370,8 @@ class RecipeRepository {
         id: '9',
         title: '麻婆豆腐',
         description: '本格的な四川風の辛くて旨い麻婆豆腐',
-        imageUrl: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=800',
+        imageUrl:
+            'https://images.unsplash.com/photo-1585032226651-759b368d7246?w=800',
         category: '中華',
         prepTime: 10,
         cookTime: 15,
@@ -416,7 +425,8 @@ class RecipeRepository {
         id: '10',
         title: 'グリーンカレー',
         description: 'ココナッツミルクとハーブの香り豊かなタイカレー',
-        imageUrl: 'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=800',
+        imageUrl:
+            'https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=800',
         category: 'タイ料理',
         prepTime: 15,
         cookTime: 20,
@@ -460,7 +470,8 @@ class RecipeRepository {
         id: '11',
         title: 'ローストビーフ',
         description: 'しっとりジューシーなパーティーの主役',
-        imageUrl: 'https://images.unsplash.com/photo-1558030006-450675393462?w=800',
+        imageUrl:
+            'https://images.unsplash.com/photo-1558030006-450675393462?w=800',
         category: '洋食',
         prepTime: 20,
         cookTime: 40,
@@ -512,7 +523,8 @@ class RecipeRepository {
         id: '12',
         title: '天丼',
         description: 'サクサクの天ぷらに甘辛いタレが絶品',
-        imageUrl: 'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=800',
+        imageUrl:
+            'https://images.unsplash.com/photo-1603360946369-dc9bb6258143?w=800',
         category: '和食',
         prepTime: 20,
         cookTime: 20,
@@ -556,7 +568,8 @@ class RecipeRepository {
         id: '13',
         title: 'タコス',
         description: 'スパイシーな挽肉とフレッシュな野菜のメキシカン',
-        imageUrl: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=800',
+        imageUrl:
+            'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=800',
         category: 'メキシコ料理',
         prepTime: 15,
         cookTime: 15,
@@ -608,7 +621,8 @@ class RecipeRepository {
         id: '14',
         title: 'チーズバーガー',
         description: 'ジューシーなパティととろけるチーズの定番バーガー',
-        imageUrl: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800',
+        imageUrl:
+            'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800',
         category: 'アメリカン',
         prepTime: 15,
         cookTime: 10,
@@ -652,7 +666,8 @@ class RecipeRepository {
         id: '15',
         title: 'プルコギ',
         description: '甘辛いタレで炒めた韓国の焼肉',
-        imageUrl: 'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=800',
+        imageUrl:
+            'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=800',
         category: '韓国料理',
         prepTime: 20,
         cookTime: 15,
@@ -696,7 +711,8 @@ class RecipeRepository {
         id: '16',
         title: 'ラザニア',
         description: 'ミートソースとホワイトソースの層が美しい',
-        imageUrl: 'https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=800',
+        imageUrl:
+            'https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=800',
         category: 'イタリアン',
         prepTime: 30,
         cookTime: 40,
@@ -755,8 +771,10 @@ class RecipeRepository {
     final favoriteIdSet = favoriteIds.map((f) => f.id).toSet();
 
     return recipes
-        .map((recipe) =>
-            recipe.copyWith(isFavorite: favoriteIdSet.contains(recipe.id)))
+        .map(
+          (recipe) =>
+              recipe.copyWith(isFavorite: favoriteIdSet.contains(recipe.id)),
+        )
         .toList();
   }
 
@@ -804,10 +822,18 @@ class RecipeRepository {
         calories: drift.Value(recipe.calories),
         rating: drift.Value(recipe.rating),
         ingredients: drift.Value(jsonEncode(recipe.ingredients)),
-        steps: drift.Value(jsonEncode(recipe.steps.map((s) => {
-          'stepNumber': s.stepNumber,
-          'description': s.description,
-        }).toList())),
+        steps: drift.Value(
+          jsonEncode(
+            recipe.steps
+                .map(
+                  (s) => {
+                    'stepNumber': s.stepNumber,
+                    'description': s.description,
+                  },
+                )
+                .toList(),
+          ),
+        ),
         allergies: drift.Value(jsonEncode(recipe.allergies)),
         savedAt: drift.Value(DateTime.now()),
       ),

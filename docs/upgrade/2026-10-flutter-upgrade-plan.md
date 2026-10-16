@@ -25,7 +25,9 @@
 
 - リリースフィード（`releases_macos.json`）で確認した最新 stable は **3.47.7**。stable に 3.48 系は未リリース（3.48 は beta のみ）。
 - 3.47.5 → 3.47.7 は**同一マイナー系のパッチ更新**で、フレームワークの破壊的変更はなし（バグ/セキュリティ修正のみ）。リスクは低い。
-- 破壊的変更・非推奨 API: 3.47 系内のパッチのため該当なし。`dart fix` で軽微な lint 由来の修正があれば適用する。
+- 破壊的変更・非推奨 API: 3.47 系内のパッチのため該当なし。`dart fix --dry-run` は "Nothing to fix!"。
+- **実行環境メモ**: 本マシンに `mise` は未インストールで、Flutter は **fvm**（`~/fvm/default`、3.47.5）管理。`mise install` は実行不可のため、`.mise.toml` と CI（`subosito/flutter-action` の `flutter-version`）の宣言ピンを 3.47.7 に更新し、**CI が実際に 3.47.7 で検証**する。ローカル検証は 3.47.5（パッチ等価）で実施。
+- **ネイティブ scaffold ドリフト（既知・本PRでは据え置き）**: `flutter create` の最新テンプレートと比較すると、Android が repo 側で古い: AGP 8.11.1（テンプレート 9.1.0）、Kotlin 2.2.20（2.4.0）、Gradle 8.14（9.3.1）、`kotlin{}` DSL も旧形式。これは 3.47.7 パッチ更新に **必須ではなく**、AGP/Gradle/Kotlin のメジャー更新は破壊リスクが高いため本PRでは取り込まない。現行構成で `flutter build apk --debug` が通ることを Step 5 で確認し、ネイティブ更新は別途対応候補とする。iOS は Podfile/Deployment Target 13.0 で現行テンプレートと差異なし。
 
 ## 依存パッケージの区分
 

@@ -49,7 +49,7 @@ dependencies:
 
   # UI関連
   table_calendar: ^3.3.0
-  fl_chart: ^0.69.0
+  fl_chart: ^1.2.0
 
   # ユーティリティ
   intl: ^0.20.2

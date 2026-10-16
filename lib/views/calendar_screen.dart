@@ -21,11 +21,7 @@ class CalendarScreen extends HookConsumerWidget {
       appBar: AppBar(
         title: const Row(
           children: [
-            Icon(
-              Icons.calendar_month,
-              color: Color(0xFFFF6B35),
-              size: 28,
-            ),
+            Icon(Icons.calendar_month, color: Color(0xFFFF6B35), size: 28),
             SizedBox(width: 12),
             Text(
               '今月の献立',
@@ -153,13 +149,11 @@ class CalendarScreen extends HookConsumerWidget {
                         const SizedBox(height: 16),
                         _buildRecipeCard(
                           context,
-                          monthlyRecipes[
-                            DateTime(
-                              selectedDay.value.year,
-                              selectedDay.value.month,
-                              selectedDay.value.day,
-                            )
-                          ],
+                          monthlyRecipes[DateTime(
+                            selectedDay.value.year,
+                            selectedDay.value.month,
+                            selectedDay.value.day,
+                          )],
                         ),
                       ],
                     ),
@@ -192,11 +186,7 @@ class CalendarScreen extends HookConsumerWidget {
 
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 12),
-                            child: _buildRecipeListItem(
-                              context,
-                              date,
-                              recipe,
-                            ),
+                            child: _buildRecipeListItem(context, date, recipe),
                           );
                         },
                       ),
@@ -380,10 +370,7 @@ class CalendarScreen extends HookConsumerWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: const Color(0xFFE0E0E0),
-            width: 1,
-          ),
+          border: Border.all(color: const Color(0xFFE0E0E0), width: 1),
         ),
         child: Row(
           children: [

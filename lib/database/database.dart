@@ -50,17 +50,17 @@ class AppDatabase extends _$AppDatabase {
 
   // お気に入りかどうかをチェック
   Future<bool> isFavorite(String id) async {
-    final result = await (select(favoriteRecipes)
-          ..where((t) => t.id.equals(id)))
-        .get();
+    final result = await (select(
+      favoriteRecipes,
+    )..where((t) => t.id.equals(id))).get();
     return result.isNotEmpty;
   }
 
   // IDでお気に入りレシピを取得
   Future<FavoriteRecipe?> getFavoriteById(String id) async {
-    final result = await (select(favoriteRecipes)
-          ..where((t) => t.id.equals(id)))
-        .getSingleOrNull();
+    final result = await (select(
+      favoriteRecipes,
+    )..where((t) => t.id.equals(id))).getSingleOrNull();
     return result;
   }
 }

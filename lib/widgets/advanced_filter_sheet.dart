@@ -134,11 +134,7 @@ class _DifficultyFilterSection extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final filterState = ref.watch(recipeFilterStateProvider);
 
-    final difficulties = {
-      'easy': '簡単',
-      'medium': '普通',
-      'hard': '難しい',
-    };
+    final difficulties = {'easy': '簡単', 'medium': '普通', 'hard': '難しい'};
 
     return ExpansionTile(
       title: const Text('難易度'),
@@ -201,30 +197,30 @@ class _CookingTimeFilterSection extends HookConsumerWidget {
           : null,
       shape: const Border(),
       children: [
-        RadioListTile<CookingTimeRange?>(
-          title: const Text('指定なし'),
-          value: null,
+        RadioGroup<CookingTimeRange?>(
           groupValue: filterState.cookingTimeRange,
           onChanged: (value) {
             ref
                 .read(recipeFilterStateProvider.notifier)
                 .updateCookingTimeRange(value);
           },
-          activeColor: const Color(0xFFFF6B35),
+          child: Column(
+            children: [
+              RadioListTile<CookingTimeRange?>(
+                title: const Text('指定なし'),
+                value: null,
+                activeColor: const Color(0xFFFF6B35),
+              ),
+              ...CookingTimeRange.values.map((range) {
+                return RadioListTile<CookingTimeRange?>(
+                  title: Text(range.label),
+                  value: range,
+                  activeColor: const Color(0xFFFF6B35),
+                );
+              }),
+            ],
+          ),
         ),
-        ...CookingTimeRange.values.map((range) {
-          return RadioListTile<CookingTimeRange?>(
-            title: Text(range.label),
-            value: range,
-            groupValue: filterState.cookingTimeRange,
-            onChanged: (value) {
-              ref
-                  .read(recipeFilterStateProvider.notifier)
-                  .updateCookingTimeRange(value);
-            },
-            activeColor: const Color(0xFFFF6B35),
-          );
-        }),
       ],
     );
   }
@@ -245,30 +241,30 @@ class _CalorieFilterSection extends HookConsumerWidget {
           : null,
       shape: const Border(),
       children: [
-        RadioListTile<CalorieRange?>(
-          title: const Text('指定なし'),
-          value: null,
+        RadioGroup<CalorieRange?>(
           groupValue: filterState.calorieRange,
           onChanged: (value) {
             ref
                 .read(recipeFilterStateProvider.notifier)
                 .updateCalorieRange(value);
           },
-          activeColor: const Color(0xFFFF6B35),
+          child: Column(
+            children: [
+              RadioListTile<CalorieRange?>(
+                title: const Text('指定なし'),
+                value: null,
+                activeColor: const Color(0xFFFF6B35),
+              ),
+              ...CalorieRange.values.map((range) {
+                return RadioListTile<CalorieRange?>(
+                  title: Text(range.label),
+                  value: range,
+                  activeColor: const Color(0xFFFF6B35),
+                );
+              }),
+            ],
+          ),
         ),
-        ...CalorieRange.values.map((range) {
-          return RadioListTile<CalorieRange?>(
-            title: Text(range.label),
-            value: range,
-            groupValue: filterState.calorieRange,
-            onChanged: (value) {
-              ref
-                  .read(recipeFilterStateProvider.notifier)
-                  .updateCalorieRange(value);
-            },
-            activeColor: const Color(0xFFFF6B35),
-          );
-        }),
       ],
     );
   }
@@ -354,7 +350,9 @@ class _AllergyFilterSection extends HookConsumerWidget {
             spacing: 8,
             runSpacing: 8,
             children: allergies.map((allergy) {
-              final isSelected = filterState.excludedAllergies.contains(allergy);
+              final isSelected = filterState.excludedAllergies.contains(
+                allergy,
+              );
               return FilterChip(
                 label: Text(allergy),
                 selected: isSelected,
@@ -476,10 +474,7 @@ class _IngredientFilterSection extends HookConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                '含む材料',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
+              const Text('含む材料', style: TextStyle(fontWeight: FontWeight.w600)),
               const SizedBox(height: 8),
               Row(
                 children: [
@@ -504,13 +499,16 @@ class _IngredientFilterSection extends HookConsumerWidget {
                     onPressed: () {
                       if (includeController.text.isNotEmpty) {
                         final current =
-                            filterState.ingredientFilter ?? const IngredientFilter();
+                            filterState.ingredientFilter ??
+                            const IngredientFilter();
 
-                        ref.read(recipeFilterStateProvider.notifier).updateIngredientFilter(
+                        ref
+                            .read(recipeFilterStateProvider.notifier)
+                            .updateIngredientFilter(
                               IngredientFilter(
                                 mustInclude: {
                                   ...current.mustInclude,
-                                  includeController.text
+                                  includeController.text,
                                 },
                                 mustExclude: current.mustExclude,
                               ),
@@ -527,7 +525,9 @@ class _IngredientFilterSection extends HookConsumerWidget {
                   child: Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: filterState.ingredientFilter!.mustInclude.map((ingredient) {
+                    children: filterState.ingredientFilter!.mustInclude.map((
+                      ingredient,
+                    ) {
                       return Chip(
                         label: Text(ingredient),
                         deleteIcon: const Icon(Icons.close, size: 18),
@@ -535,14 +535,18 @@ class _IngredientFilterSection extends HookConsumerWidget {
                           final current = filterState.ingredientFilter!;
                           final newSet = Set<String>.from(current.mustInclude)
                             ..remove(ingredient);
-                          ref.read(recipeFilterStateProvider.notifier).updateIngredientFilter(
+                          ref
+                              .read(recipeFilterStateProvider.notifier)
+                              .updateIngredientFilter(
                                 IngredientFilter(
                                   mustInclude: newSet,
                                   mustExclude: current.mustExclude,
                                 ),
                               );
                         },
-                        backgroundColor: const Color(0xFFFF6B35).withValues(alpha: 0.1),
+                        backgroundColor: const Color(
+                          0xFFFF6B35,
+                        ).withValues(alpha: 0.1),
                         deleteIconColor: const Color(0xFFFF6B35),
                       );
                     }).toList(),
@@ -577,14 +581,17 @@ class _IngredientFilterSection extends HookConsumerWidget {
                     onPressed: () {
                       if (excludeController.text.isNotEmpty) {
                         final current =
-                            filterState.ingredientFilter ?? const IngredientFilter();
+                            filterState.ingredientFilter ??
+                            const IngredientFilter();
 
-                        ref.read(recipeFilterStateProvider.notifier).updateIngredientFilter(
+                        ref
+                            .read(recipeFilterStateProvider.notifier)
+                            .updateIngredientFilter(
                               IngredientFilter(
                                 mustInclude: current.mustInclude,
                                 mustExclude: {
                                   ...current.mustExclude,
-                                  excludeController.text
+                                  excludeController.text,
                                 },
                               ),
                             );
@@ -600,7 +607,9 @@ class _IngredientFilterSection extends HookConsumerWidget {
                   child: Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: filterState.ingredientFilter!.mustExclude.map((ingredient) {
+                    children: filterState.ingredientFilter!.mustExclude.map((
+                      ingredient,
+                    ) {
                       return Chip(
                         label: Text(ingredient),
                         deleteIcon: const Icon(Icons.close, size: 18),
@@ -608,7 +617,9 @@ class _IngredientFilterSection extends HookConsumerWidget {
                           final current = filterState.ingredientFilter!;
                           final newSet = Set<String>.from(current.mustExclude)
                             ..remove(ingredient);
-                          ref.read(recipeFilterStateProvider.notifier).updateIngredientFilter(
+                          ref
+                              .read(recipeFilterStateProvider.notifier)
+                              .updateIngredientFilter(
                                 IngredientFilter(
                                   mustInclude: current.mustInclude,
                                   mustExclude: newSet,

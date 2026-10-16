@@ -49,77 +49,97 @@ class FilteredRecipes extends _$FilteredRecipes {
 
     // 1. カテゴリフィルタ
     if (filterState.category != 'すべて') {
-      recipes = recipes.where((r) => r.category == filterState.category).toList();
+      recipes = recipes
+          .where((r) => r.category == filterState.category)
+          .toList();
     }
 
     // 2. 検索クエリフィルタ
     if (filterState.searchQuery.isNotEmpty) {
       recipes = recipes.where((recipe) {
-        return recipe.title.toLowerCase().contains(filterState.searchQuery.toLowerCase()) ||
-            recipe.description.toLowerCase().contains(filterState.searchQuery.toLowerCase());
+        return recipe.title.toLowerCase().contains(
+              filterState.searchQuery.toLowerCase(),
+            ) ||
+            recipe.description.toLowerCase().contains(
+              filterState.searchQuery.toLowerCase(),
+            );
       }).toList();
     }
 
     // 3. 難易度フィルタ（OR条件）
     if (filterState.difficulties.isNotEmpty) {
-      recipes = recipes.where((r) =>
-        filterState.difficulties.contains(r.difficulty)
-      ).toList();
+      recipes = recipes
+          .where((r) => filterState.difficulties.contains(r.difficulty))
+          .toList();
     }
 
     // 4. 調理時間フィルタ
     if (filterState.cookingTimeRange != null) {
-      recipes = recipes.where((r) =>
-        r.totalTime <= filterState.cookingTimeRange!.maxMinutes
-      ).toList();
+      recipes = recipes
+          .where((r) => r.totalTime <= filterState.cookingTimeRange!.maxMinutes)
+          .toList();
     }
 
     // 5. カロリーフィルタ
     if (filterState.calorieRange != null) {
-      recipes = recipes.where((r) =>
-        r.calories <= filterState.calorieRange!.maxCalories
-      ).toList();
+      recipes = recipes
+          .where((r) => r.calories <= filterState.calorieRange!.maxCalories)
+          .toList();
     }
 
     // 6. 評価フィルタ
     if (filterState.minRating != null) {
-      recipes = recipes.where((r) =>
-        r.rating >= filterState.minRating!
-      ).toList();
+      recipes = recipes
+          .where((r) => r.rating >= filterState.minRating!)
+          .toList();
     }
 
     // 7. アレルギー除外フィルタ（AND条件: 指定アレルギーを含まない）
     if (filterState.excludedAllergies.isNotEmpty) {
-      recipes = recipes.where((r) =>
-        !r.allergies.any((a) => filterState.excludedAllergies.contains(a))
-      ).toList();
+      recipes = recipes
+          .where(
+            (r) => !r.allergies.any(
+              (a) => filterState.excludedAllergies.contains(a),
+            ),
+          )
+          .toList();
     }
 
     // 8. タグフィルタ（AND条件: すべてのタグを含む）
     if (filterState.selectedTags.isNotEmpty) {
-      recipes = recipes.where((r) =>
-        filterState.selectedTags.every((tag) => r.tags.contains(tag))
-      ).toList();
+      recipes = recipes
+          .where(
+            (r) =>
+                filterState.selectedTags.every((tag) => r.tags.contains(tag)),
+          )
+          .toList();
     }
 
     // 9. 材料フィルタ
     if (filterState.ingredientFilter != null) {
       if (filterState.ingredientFilter!.mustInclude.isNotEmpty) {
-        recipes = recipes.where((r) =>
-          filterState.ingredientFilter!.mustInclude.every((ingredient) =>
-            r.ingredients.any((i) => i.toLowerCase().contains(ingredient.toLowerCase()))
-          )
-        ).toList();
+        recipes = recipes
+            .where(
+              (r) => filterState.ingredientFilter!.mustInclude.every(
+                (ingredient) => r.ingredients.any(
+                  (i) => i.toLowerCase().contains(ingredient.toLowerCase()),
+                ),
+              ),
+            )
+            .toList();
       }
 
       if (filterState.ingredientFilter!.mustExclude.isNotEmpty) {
-        recipes = recipes.where((r) =>
-          !r.ingredients.any((i) =>
-            filterState.ingredientFilter!.mustExclude.any((ingredient) =>
-              i.toLowerCase().contains(ingredient.toLowerCase())
+        recipes = recipes
+            .where(
+              (r) => !r.ingredients.any(
+                (i) => filterState.ingredientFilter!.mustExclude.any(
+                  (ingredient) =>
+                      i.toLowerCase().contains(ingredient.toLowerCase()),
+                ),
+              ),
             )
-          )
-        ).toList();
+            .toList();
       }
     }
 
@@ -206,10 +226,7 @@ class RecipeFilterState extends _$RecipeFilterState {
   }
 
   void updateMinRating(double? rating) {
-    state = state.copyWith(
-      minRating: rating,
-      clearMinRating: rating == null,
-    );
+    state = state.copyWith(minRating: rating, clearMinRating: rating == null);
   }
 
   void toggleAllergyExclusion(String allergy) {
@@ -280,7 +297,8 @@ class MonthlyRecipes extends _$MonthlyRecipes {
     for (int day = 1; day <= daysInMonth; day++) {
       final date = DateTime(year, month, day);
       // ランダムにレシピを割り当て（日付をシードに使用して一貫性を保つ）
-      final index = (date.year * 10000 + date.month * 100 + date.day) % allRecipes.length;
+      final index =
+          (date.year * 10000 + date.month * 100 + date.day) % allRecipes.length;
       monthlyRecipes[date] = allRecipes[index];
     }
 

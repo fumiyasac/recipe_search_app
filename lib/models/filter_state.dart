@@ -4,10 +4,7 @@ enum CookingTimeRange {
   under60(maxMinutes: 60, label: '1時間以内'),
   under120(maxMinutes: 120, label: '2時間以内');
 
-  const CookingTimeRange({
-    required this.maxMinutes,
-    required this.label,
-  });
+  const CookingTimeRange({required this.maxMinutes, required this.label});
 
   final int maxMinutes;
   final String label;
@@ -19,10 +16,7 @@ enum CalorieRange {
   medium(maxCalories: 500, label: '中カロリー (500kcal以下)'),
   high(maxCalories: 99999, label: '制限なし');
 
-  const CalorieRange({
-    required this.maxCalories,
-    required this.label,
-  });
+  const CalorieRange({required this.maxCalories, required this.label});
 
   final int maxCalories;
   final String label;
@@ -95,12 +89,18 @@ class FilterState {
       category: category ?? this.category,
       searchQuery: searchQuery ?? this.searchQuery,
       difficulties: difficulties ?? this.difficulties,
-      cookingTimeRange: clearCookingTimeRange ? null : (cookingTimeRange ?? this.cookingTimeRange),
-      calorieRange: clearCalorieRange ? null : (calorieRange ?? this.calorieRange),
+      cookingTimeRange: clearCookingTimeRange
+          ? null
+          : (cookingTimeRange ?? this.cookingTimeRange),
+      calorieRange: clearCalorieRange
+          ? null
+          : (calorieRange ?? this.calorieRange),
       minRating: clearMinRating ? null : (minRating ?? this.minRating),
       excludedAllergies: excludedAllergies ?? this.excludedAllergies,
       selectedTags: selectedTags ?? this.selectedTags,
-      ingredientFilter: clearIngredientFilter ? null : (ingredientFilter ?? this.ingredientFilter),
+      ingredientFilter: clearIngredientFilter
+          ? null
+          : (ingredientFilter ?? this.ingredientFilter),
     );
   }
 

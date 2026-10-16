@@ -14,11 +14,7 @@ void main() {
     ),
   );
 
-  runApp(
-    const ProviderScope(
-      child: RecipeApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: RecipeApp()));
 }
 
 class RecipeApp extends StatelessWidget {

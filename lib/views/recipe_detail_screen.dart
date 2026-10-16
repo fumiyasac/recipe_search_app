@@ -7,10 +7,7 @@ import '../widgets/nutrition_chart.dart';
 class RecipeDetailScreen extends HookConsumerWidget {
   final Recipe recipe;
 
-  const RecipeDetailScreen({
-    super.key,
-    required this.recipe,
-  });
+  const RecipeDetailScreen({super.key, required this.recipe});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -37,10 +34,7 @@ class RecipeDetailScreen extends HookConsumerWidget {
                   ],
                 ),
                 child: IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    color: Color(0xFF1A1A1A),
-                  ),
+                  icon: const Icon(Icons.arrow_back, color: Color(0xFF1A1A1A)),
                   onPressed: () => Navigator.pop(context),
                 ),
               ),
@@ -48,7 +42,9 @@ class RecipeDetailScreen extends HookConsumerWidget {
             actions: [
               Consumer(
                 builder: (context, watch, child) {
-                  final isFavoriteAsync = ref.watch(recipeFavoriteStatusProvider(recipe.id));
+                  final isFavoriteAsync = ref.watch(
+                    recipeFavoriteStatusProvider(recipe.id),
+                  );
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
@@ -85,13 +81,17 @@ class RecipeDetailScreen extends HookConsumerWidget {
                             height: 24,
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF6B35)),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Color(0xFFFF6B35),
+                              ),
                             ),
                           ),
                         ),
                         error: (error, stack) => IconButton(
                           icon: Icon(
-                            recipe.isFavorite ? Icons.favorite : Icons.favorite_border,
+                            recipe.isFavorite
+                                ? Icons.favorite
+                                : Icons.favorite_border,
                             color: recipe.isFavorite
                                 ? const Color(0xFFFF6B35)
                                 : const Color(0xFF1A1A1A),
@@ -115,10 +115,7 @@ class RecipeDetailScreen extends HookConsumerWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.network(
-                      recipe.imageUrl,
-                      fit: BoxFit.cover,
-                    ),
+                    Image.network(recipe.imageUrl, fit: BoxFit.cover),
                     Positioned(
                       bottom: 20,
                       left: 20,
@@ -181,9 +178,7 @@ class RecipeDetailScreen extends HookConsumerWidget {
           // コンテンツ
           SliverToBoxAdapter(
             child: Container(
-              decoration: const BoxDecoration(
-                color: Color(0xFFF8F9FA),
-              ),
+              decoration: const BoxDecoration(color: Color(0xFFF8F9FA)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -238,7 +233,9 @@ class RecipeDetailScreen extends HookConsumerWidget {
                             vertical: 10,
                           ),
                           decoration: BoxDecoration(
-                            color: _getDifficultyColor(recipe.difficulty).withValues(alpha: 0.1),
+                            color: _getDifficultyColor(
+                              recipe.difficulty,
+                            ).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: _getDifficultyColor(recipe.difficulty),
@@ -298,7 +295,9 @@ class RecipeDetailScreen extends HookConsumerWidget {
                     // グラフ表示
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: NutritionChart(nutritionInfo: recipe.nutritionInfo!),
+                      child: NutritionChart(
+                        nutritionInfo: recipe.nutritionInfo!,
+                      ),
                     ),
                     const SizedBox(height: 32),
                   ],
@@ -318,7 +317,9 @@ class RecipeDetailScreen extends HookConsumerWidget {
                                   vertical: 8,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFFF6B35).withValues(alpha: 0.1),
+                                  color: const Color(
+                                    0xFFFF6B35,
+                                  ).withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
                                     color: const Color(0xFFFF6B35),
@@ -356,7 +357,9 @@ class RecipeDetailScreen extends HookConsumerWidget {
                                   vertical: 8,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF4CAF50).withValues(alpha: 0.1),
+                                  color: const Color(
+                                    0xFF4CAF50,
+                                  ).withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(8),
                                   border: Border.all(
                                     color: const Color(0xFF4CAF50),
@@ -473,7 +476,9 @@ class RecipeDetailScreen extends HookConsumerWidget {
                         children: recipe.ingredients
                             .map(
                               (ingredient) => Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8,
+                                ),
                                 child: Row(
                                   children: [
                                     Container(
@@ -523,7 +528,9 @@ class RecipeDetailScreen extends HookConsumerWidget {
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFFFF6B35).withValues(alpha: 0.3),
+                                      color: const Color(
+                                        0xFFFF6B35,
+                                      ).withValues(alpha: 0.3),
                                       blurRadius: 8,
                                       offset: const Offset(0, 2),
                                     ),
@@ -549,7 +556,9 @@ class RecipeDetailScreen extends HookConsumerWidget {
                                     borderRadius: BorderRadius.circular(12),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withValues(alpha: 0.04),
+                                        color: Colors.black.withValues(
+                                          alpha: 0.04,
+                                        ),
                                         blurRadius: 8,
                                         offset: const Offset(0, 2),
                                       ),
@@ -602,8 +611,9 @@ class RecipeDetailScreen extends HookConsumerWidget {
                                   children: [
                                     CircleAvatar(
                                       radius: 20,
-                                      backgroundImage:
-                                          NetworkImage(comment.userAvatar),
+                                      backgroundImage: NetworkImage(
+                                        comment.userAvatar,
+                                      ),
                                     ),
                                     const SizedBox(width: 12),
                                     Expanded(
@@ -670,18 +680,11 @@ class RecipeDetailScreen extends HookConsumerWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: const Color(0xFFE0E0E0),
-            width: 1,
-          ),
+          border: Border.all(color: const Color(0xFFE0E0E0), width: 1),
         ),
         child: Column(
           children: [
-            Icon(
-              icon,
-              color: const Color(0xFFFF6B35),
-              size: 26,
-            ),
+            Icon(icon, color: const Color(0xFFFF6B35), size: 26),
             const SizedBox(height: 8),
             Text(
               value,

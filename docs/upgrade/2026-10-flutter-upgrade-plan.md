@@ -1,0 +1,92 @@
+# Flutter / 依存パッケージ 更新計画（2026-10）
+
+作成日: 2026-10-17 / ブランチ: `chore/upgrade-flutter-and-deps`
+
+①〜③で整備した CI・Skill・Subagent を検証に活用し、**壊さずに上げる**ことを最優先とする。
+
+## ベースライン（更新前）
+
+| 項目 | 値 |
+|------|----|
+| Flutter | 3.47.5（stable, 2026-09-18） |
+| Dart | 3.13.4 |
+| `flutter analyze` | 0 件（No issues found!） |
+| `flutter test` | 16/16 passed |
+| カバレッジ | 44.7%（551/1234 行） |
+
+> ベースラインでテストは全て通過しているため、更新作業に進む。
+
+## Flutter SDK
+
+| | 現行 | 目標 |
+|--|------|------|
+| Flutter | 3.47.5 | **3.47.7**（stable, 2026-10-08） |
+| Dart | 3.13.4 | 3.13.x（3.47 系のまま） |
+
+- リリースフィード（`releases_macos.json`）で確認した最新 stable は **3.47.7**。stable に 3.48 系は未リリース（3.48 は beta のみ）。
+- 3.47.5 → 3.47.7 は**同一マイナー系のパッチ更新**で、フレームワークの破壊的変更はなし（バグ/セキュリティ修正のみ）。リスクは低い。
+- 破壊的変更・非推奨 API: 3.47 系内のパッチのため該当なし。`dart fix` で軽微な lint 由来の修正があれば適用する。
+
+## 依存パッケージの区分
+
+### A: 制約内で上がる（パッチ・マイナー）—`flutter pub upgrade <名前>` で一括
+
+| パッケージ | 現行 | 目標 | 備考 |
+|------------|------|------|------|
+| flutter_riverpod | 3.1.0 | 3.4.3 | riverpod グループで同時に上げる |
+| hooks_riverpod | 3.1.0 | 3.4.3 | 同上 |
+| riverpod_annotation | 4.0.0 | 4.0.7 | 同上 |
+| riverpod_generator (dev) | 4.0.0+1 | 4.0.9 | 同上。codegen 再実行必須 |
+| path_provider | 2.1.5 | 2.1.6 | |
+| uuid | 4.5.2 | 4.6.0 | |
+| build_runner (dev) | 2.10.4 | 2.16.2 | |
+
+riverpod 4 パッケージ + flutter_hooks の整合性: いずれも現行制約（riverpod 系 `^3`/`^4`、flutter_hooks `^0.21.3+1`）内で解決でき、マイナー更新のため破壊的変更なしと判断。実行時に analyze で非推奨を確認する。
+
+> ⚠️ A の一括更新では **drift / sqlite3 系を巻き込まないよう、パッケージ名を明示して** `flutter pub upgrade` する（素の `flutter pub upgrade` だと transitive の `sqlite3` が 2.x→3.x に上がってしまうため。下記 C 参照）。
+
+### B: pubspec.yaml 編集が必要（影響は小）—1 件ずつ
+
+| パッケージ | 現行制約 | 目標 | 影響箇所 | 対応 |
+|------------|----------|------|----------|------|
+| cupertino_icons | ^1.0.8 | ^2.0.0 | アイコンフォント（アセットのみ） | メジャーだが実コードへの影響は想定なし。ビルドで確認 |
+| fl_chart | ^0.69.0 | ^1.2.0 | `lib/widgets/nutrition_chart.dart` のみ | **影響小**: 当該コードは `PieChart`/`PieChartData`/`PieChartSectionData` のみ使用。1.0 で削除された `swapAnimationDuration/Curve`・`tooltipRoundedRadius` は**未使用**。bump 後にグラフ描画を目視確認 |
+| table_calendar | ^3.0.9 | ^3.3.0 | `lib/views/calendar_screen.dart` のみ | 3.3.0 は `locale` 型が `dynamic`→`String?`。locale 未指定なら影響なし。要確認 |
+| intl | ^0.19.0 | ^0.20.3 | **lib 内で未使用**（直接参照なし） | table_calendar 3.3.0 が `intl >=0.20.3` を要求するため連動して上げる。flutter_localizations は未使用のためピン留め競合なし |
+
+> table_calendar と intl は **同時に** 上げる（table_calendar 3.3.0 の intl 下限制約のため）。
+
+### C: 影響が大きい / 要判断 —慎重に、承認を仰ぐ
+
+| パッケージ | 現行 | 「最新」 | 判断 |
+|------------|------|----------|------|
+| **sqlite3_flutter_libs** | 0.5.41 | **0.6.0+eol** | **上げない（据え置き）。** 0.6.0 は EOL リリースで「全コードを削除」し、`sqlite3` v3.x のネイティブ読み込みへ移行（＝本パッケージ廃止）を推奨するもの。これはパッケージ置き換え／アーキテクチャ変更に当たるため、本 PR では実施せず別途判断とする。制約 `^0.5.20` のまま 0.5.42 に留める |
+| **sqlite3**（transitive） | 2.9.4 | 3.7.1 | drift を 2.35 系へ上げると transitive で 3.x へ移動し得る。DB の互換性検証（後述）を必須とする。検証が通らなければ drift ごと据え置き |
+| **drift / drift_dev** | 2.30.0 | 2.35.2 / 2.35.1 | 制約内（`^2.16.0`）のマイナー更新だが、上記 sqlite3 と連動するため **C として独立ステップで検証**（A の一括には含めない） |
+
+#### impact-analyzer による C 区分の利用箇所（読み取り専用調査の結果）
+
+- **sqlite3_flutter_libs**: `lib/` に直接 import なし（drift のネイティブライブラリ供給用の runtime 依存）。実際の DB オープンは `lib/database/database.dart` の `_openConnection()` → `NativeDatabase(file)`。
+- **sqlite3**: 直接 import なし（drift 経由の transitive）。
+- **drift**: `lib/database/database.dart`（`AppDatabase` / `FavoriteRecipes` / `NativeDatabase` / `LazyDatabase`）、`lib/repositories/recipe_repository.dart`（`FavoriteRecipesCompanion` / `drift.Value`）、生成物 `database.g.dart`、`test/viewmodels/favorite_recipes_provider_test.dart`（`AppDatabase.forTesting` + `NativeDatabase.memory()`）。
+
+## 実行方針（Step 2 以降）
+
+1. **Flutter 3.47.7**（`.mise.toml` + `environment.sdk`）。`dart fix` 適用。codegen→format→analyze→test。
+2. **A 一括**（riverpod 系・path_provider・uuid・build_runner をパッケージ名指定で upgrade）。drift/sqlite3 は巻き込まない。codegen→検証→コミット。
+3. **B を 1 件ずつ**: cupertino_icons → (table_calendar + intl) → fl_chart。各々 pub get→（必要なら）コード修正→codegen→検証→コミット。
+4. **drift（+ sqlite3 transitive）を独立ステップ**で上げ、以下の互換性検証を必ず実施:
+   - main 状態で作成した DB ファイルを更新後アプリで開き、お気に入りデータが読めること。
+   - `drift_dev schema dump` と、マイグレーション検証テスト（なければ test-writer で追加）。
+   - 検証が通らなければ drift を据え置き、理由を記録。
+5. **sqlite3_flutter_libs 0.6.0+eol への移行は本 PR では見送り**、既知の課題として記録（別 PR でチーム判断）。
+
+## 影響の大きい手動確認ポイント（見た目が変わり得る箇所）
+
+- カレンダー表示（`calendar_screen.dart` / table_calendar）
+- 栄養バランスの円グラフ（`nutrition_chart.dart` / fl_chart 1.x）
+- Cupertino アイコン表示（cupertino_icons 2.x）
+
+## 実施結果
+
+（Step 6 で追記）

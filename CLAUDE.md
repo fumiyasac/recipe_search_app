@@ -12,23 +12,23 @@
 
 | 分類 | 使用技術 | バージョン（pubspec.yaml） |
 |------|----------|---------------------------|
-| SDK | Flutter / Dart | Flutter 3.47.5 / Dart 3.13.x（`environment.sdk: ^3.10.4`） |
+| SDK | Flutter / Dart | Flutter 3.47.7 / Dart 3.13.x（`environment.sdk: ^3.10.4`） |
 | 状態管理 | flutter_riverpod | ^3.1.0 |
 | 状態管理（コード生成） | riverpod_annotation / riverpod_generator | ^4.0.0 / ^4.0.0+1 |
 | 状態管理（Hooks 連携） | hooks_riverpod / flutter_hooks | ^3.1.0 / ^0.21.3+1 |
 | ローカル DB | drift / drift_dev | ^2.16.0 |
 | SQLite ランタイム | sqlite3_flutter_libs | ^0.5.20 |
 | パス解決 | path_provider / path | ^2.1.2 / ^1.9.0 |
-| カレンダー UI | table_calendar | ^3.0.9 |
-| グラフ UI | fl_chart | ^0.69.0 |
-| ユーティリティ | intl / uuid | ^0.19.0 / ^4.3.3 |
+| カレンダー UI | table_calendar | ^3.3.0 |
+| グラフ UI | fl_chart | ^1.2.0 |
+| ユーティリティ | intl / uuid | ^0.20.2 / ^4.3.3 |
 | Lint | flutter_lints | ^6.0.0 |
 | コード生成基盤 | build_runner | ^2.4.8 |
 
 ## セットアップ
 
 ```bash
-# ツールバージョンの導入（mise 利用時。.mise.toml で Flutter 3.47.5 を固定）
+# ツールバージョンの導入（mise 利用時。.mise.toml で Flutter 3.47.7 を固定）
 mise install
 # Git フックの有効化（初回のみ。コミット時に dart format を自動実行）
 sh scripts/setup-hooks.sh

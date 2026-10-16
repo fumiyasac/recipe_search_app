@@ -25,7 +25,7 @@
 
 | ツール | バージョン | 確認コマンド |
 |--------|-----------|--------------|
-| Flutter | 3.47.5（`.mise.toml` で固定） | `flutter --version` |
+| Flutter | 3.47.7（`.mise.toml` で固定） | `flutter --version` |
 | Dart | 3.13.x（pubspec の `sdk: ^3.10.4` を満たすこと） | `dart --version` |
 | iOS 開発 | Xcode（Mac のみ） | `xcodebuild -version` |
 | Android 開発 | Android Studio / Android SDK | — |
@@ -35,7 +35,7 @@
 
 ### mise によるツールバージョン管理（任意・推奨）
 
-`.mise.toml` で Flutter のバージョン（3.47.5）を固定しています。[mise](https://mise.jdx.dev/) を導入すると、チーム・CI と同一バージョンの Flutter を自動で用意できます。
+`.mise.toml` で Flutter のバージョン（3.47.7）を固定しています。[mise](https://mise.jdx.dev/) を導入すると、チーム・CI と同一バージョンの Flutter を自動で用意できます。
 
 ```bash
 # mise のインストール（macOS / Homebrew の例）
@@ -47,7 +47,7 @@ echo 'eval "$(mise activate zsh)"' >> ~/.zshrc
 mise install
 ```
 
-mise を使わない場合も、Flutter 3.47.5（stable）を手動で用意すれば動作します。
+mise を使わない場合も、Flutter 3.47.7（stable）を手動で用意すれば動作します。
 
 ## クイックスタート
 
@@ -56,7 +56,7 @@ mise を使わない場合も、Flutter 3.47.5（stable）を手動で用意す�
 git clone git@github.com:fumiyasac/recipe_search_app.git
 cd recipe_search_app
 
-# 2. ツールバージョンを導入（mise 利用時。未使用なら Flutter 3.47.5 を手動で用意）
+# 2. ツールバージョンを導入（mise 利用時。未使用なら Flutter 3.47.7 を手動で用意）
 mise install
 
 # 3. Git フックを有効化（コミット時に dart format を自動実行）

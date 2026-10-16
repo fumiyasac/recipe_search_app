@@ -91,4 +91,55 @@ riverpod 4 パッケージ + flutter_hooks の整合性: いずれも現行制�
 
 ## 実施結果
 
-（Step 6 で追記）
+### 最終バージョン（更新前 → 更新後）
+
+| パッケージ / SDK | 前 | 後 |
+|------------------|----|----|
+| Flutter（ピン） | 3.47.5 | 3.47.7（ローカル検証は 3.47.5、CI は 3.47.7） |
+| flutter_riverpod / hooks_riverpod / riverpod | 3.1.0 | 3.4.3 |
+| riverpod_annotation | 4.0.0 | 4.0.7 |
+| riverpod_generator (dev) | 4.0.0+1 | 4.0.9 |
+| drift | 2.30.0 | 2.35.2 |
+| drift_dev (dev) | 2.30.0 | 2.35.1 |
+| sqlite3（transitive） | 2.9.4 | 3.7.1 |
+| sqlite3_flutter_libs | 0.5.41 | 0.5.42 |
+| analyzer（transitive） | 8.4.1 | 14.5.0 |
+| source_gen / build_runner (dev) | 4.1.1 / 2.10.4 | 4.3.1 / 2.16.2 |
+| cupertino_icons | 1.0.8 | 2.0.0 |
+| table_calendar | 3.1.3 | 3.3.0 |
+| fl_chart | 0.69.2 | 1.2.0 |
+| intl | 0.19.0 | 0.20.3 |
+| path_provider / uuid | 2.1.5 / 4.5.2 | 2.1.6 / 4.6.0 |
+
+### ベースライン比較
+
+| 指標 | 前 | 後 |
+|------|----|----|
+| `flutter analyze` | 0 件 | 0 件（No issues found!） |
+| `flutter test` | 16 passed | 17 passed（DB 互換テストを追加） |
+| カバレッジ | 44.7%（551/1234） | 44.5%（551/1237、生成コード行数差。実質維持） |
+| `flutter build apk --debug` | — | 成功 |
+| `flutter build ios --no-codesign --debug` | — | 成功 |
+
+### drift 互換性検証
+
+- 更新前（drift 2.30 / sqlite3 2.x）に作成した DB フィクスチャを更新後（drift 2.35 / sqlite3 3.7.1）で開き、データが読めることを `test/migration/legacy_db_compat_test.dart` で確認。
+- `drift_dev schema dump` で `drift_schemas/drift_schema_v1.json` を記録。schemaVersion は 1 のまま（スキーマ変更なし）。
+
+### 見送ったパッケージ・変更とその理由
+
+- **sqlite3_flutter_libs 0.6.0+eol**: EOL（全コード削除）で、`sqlite3` v3.x のネイティブ読み込みへの移行＝本パッケージ廃止を促すもの。アーキテクチャ変更に当たるため本 PR では見送り、0.5.42（非 EOL 系の最新）に留めた。別 PR でチーム判断。
+- **Android ネイティブツールチェーン**（AGP 8.11.1→9.x、Gradle 8.14→9.x、Kotlin 2.2.20→2.3+）: `flutter build apk` は成功するが「将来サポート打ち切り」警告あり。本 PR の対象外（別途モダナイズ PR 推奨）。
+- **iOS プロジェクト移行**（最小 iOS 13→15、UIScene ライフサイクル移行、Swift Package Manager 統合）: `flutter build ios` 実行時に新しい Flutter ツールが自動適用したが、デバイス検証を伴う大きな変更のため本 PR からは revert（コミットに含めない）。別 PR で対応推奨。
+
+### 既知の課題
+
+- 上記ネイティブ scaffold ドリフト（Android/iOS）は、いずれ Flutter 側のサポート打ち切りで必須対応になる。
+- `environment.sdk` は `^3.10.4` のまま（Dart 3.13.x を満たすため変更不要）。
+
+### 手動確認チェックリスト（見た目が変わり得る箇所）
+
+- [ ] カレンダー画面（table_calendar 3.3.0）: 月表示・日付選択・選択中スタイル・ヘッダー
+- [ ] 栄養バランスの円グラフ（fl_chart 1.2.0）: PieChart の描画、割合ラベル（%）、セクション色、レスポンシブ（縦/横レイアウト）
+- [ ] お気に入りの追加・削除と再起動後の永続化（drift 2.35 / sqlite3 3.x）
+- [ ] アプリ全体の起動と一覧・絞り込み・詳細遷移（riverpod 3.4.3）

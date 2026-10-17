@@ -184,11 +184,51 @@ abstract class _$FilteredRecipes extends $AsyncNotifier<List<Recipe>> {
   }
 }
 
-@ProviderFor(FavoriteRecipes)
+@ProviderFor(favoriteIds)
+final favoriteIdsProvider = FavoriteIdsProvider._();
+
+final class FavoriteIdsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<Set<String>>,
+          Set<String>,
+          Stream<Set<String>>
+        >
+    with $FutureModifier<Set<String>>, $StreamProvider<Set<String>> {
+  FavoriteIdsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'favoriteIdsProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$favoriteIdsHash();
+
+  @$internal
+  @override
+  $StreamProviderElement<Set<String>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
+
+  @override
+  Stream<Set<String>> create(Ref ref) {
+    return favoriteIds(ref);
+  }
+}
+
+String _$favoriteIdsHash() => r'080bd09de470259df5b50d6dfd9eb74ca62c68b9';
+
+@ProviderFor(favoriteRecipes)
 final favoriteRecipesProvider = FavoriteRecipesProvider._();
 
 final class FavoriteRecipesProvider
-    extends $AsyncNotifierProvider<FavoriteRecipes, List<Recipe>> {
+    extends $FunctionalProvider<List<Recipe>, List<Recipe>, List<Recipe>>
+    with $Provider<List<Recipe>> {
   FavoriteRecipesProvider._()
     : super(
         from: null,
@@ -205,28 +245,24 @@ final class FavoriteRecipesProvider
 
   @$internal
   @override
-  FavoriteRecipes create() => FavoriteRecipes();
-}
+  $ProviderElement<List<Recipe>> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
-String _$favoriteRecipesHash() => r'eaecbb34787dd2f4bef7261e4fe5ee57c28b4441';
-
-abstract class _$FavoriteRecipes extends $AsyncNotifier<List<Recipe>> {
-  FutureOr<List<Recipe>> build();
-  @$mustCallSuper
   @override
-  WhenComplete runBuild() {
-    final ref = this.ref as $Ref<AsyncValue<List<Recipe>>, List<Recipe>>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<AsyncValue<List<Recipe>>, List<Recipe>>,
-              AsyncValue<List<Recipe>>,
-              Object?,
-              Object?
-            >;
-    return element.handleCreate(ref, build);
+  List<Recipe> create(Ref ref) {
+    return favoriteRecipes(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(List<Recipe> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<List<Recipe>>(value),
+    );
   }
 }
+
+String _$favoriteRecipesHash() => r'1a186c528698400c11559956e8a72ef87e666f0d';
 
 @ProviderFor(RecipeFilterState)
 final recipeFilterStateProvider = RecipeFilterStateProvider._();
@@ -478,11 +514,12 @@ abstract class _$MonthlyRecipes extends $AsyncNotifier<Map<DateTime, Recipe>> {
   }
 }
 
-@ProviderFor(RecipeFavoriteStatus)
+@ProviderFor(recipeFavoriteStatus)
 final recipeFavoriteStatusProvider = RecipeFavoriteStatusFamily._();
 
 final class RecipeFavoriteStatusProvider
-    extends $AsyncNotifierProvider<RecipeFavoriteStatus, bool> {
+    extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
   RecipeFavoriteStatusProvider._({
     required RecipeFavoriteStatusFamily super.from,
     required String super.argument,
@@ -506,7 +543,22 @@ final class RecipeFavoriteStatusProvider
 
   @$internal
   @override
-  RecipeFavoriteStatus create() => RecipeFavoriteStatus();
+  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  bool create(Ref ref) {
+    final argument = this.argument as String;
+    return recipeFavoriteStatus(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
 
   @override
   bool operator ==(Object other) {
@@ -520,17 +572,10 @@ final class RecipeFavoriteStatusProvider
 }
 
 String _$recipeFavoriteStatusHash() =>
-    r'b7d1ab8bdbc91ff0d31147112287c8155109e8ca';
+    r'893b88aba859305736ae8c0d2e1c134493916906';
 
 final class RecipeFavoriteStatusFamily extends $Family
-    with
-        $ClassFamilyOverride<
-          RecipeFavoriteStatus,
-          AsyncValue<bool>,
-          bool,
-          FutureOr<bool>,
-          String
-        > {
+    with $FunctionalFamilyOverride<bool, String> {
   RecipeFavoriteStatusFamily._()
     : super(
         retry: null,
@@ -545,27 +590,6 @@ final class RecipeFavoriteStatusFamily extends $Family
 
   @override
   String toString() => r'recipeFavoriteStatusProvider';
-}
-
-abstract class _$RecipeFavoriteStatus extends $AsyncNotifier<bool> {
-  late final _$args = ref.$arg as String;
-  String get recipeId => _$args;
-
-  FutureOr<bool> build(String recipeId);
-  @$mustCallSuper
-  @override
-  WhenComplete runBuild() {
-    final ref = this.ref as $Ref<AsyncValue<bool>, bool>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<AsyncValue<bool>, bool>,
-              AsyncValue<bool>,
-              Object?,
-              Object?
-            >;
-    return element.handleCreate(ref, () => build(_$args));
-  }
 }
 
 @ProviderFor(SelectedTabIndex)

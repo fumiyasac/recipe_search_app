@@ -13,7 +13,8 @@ class Recipe {
   final List<RecipeStep> steps;
   final List<String> allergies;
   final List<RecipeComment> comments;
-  final bool isFavorite;
+  // お気に入り状態は Recipe に持たせない。favoriteIdsProvider（drift の watch()）が
+  // 唯一の情報源であり、スナップショットに状態を持たせるとズレて不具合の原因になる。
   final NutritionInfo? nutritionInfo;
   final String difficulty; // 'easy', 'medium', 'hard'
   final List<String> tags;
@@ -34,7 +35,6 @@ class Recipe {
     required this.steps,
     required this.allergies,
     required this.comments,
-    this.isFavorite = false,
     this.nutritionInfo,
     this.difficulty = 'medium',
     this.tags = const [],
@@ -56,7 +56,6 @@ class Recipe {
     List<RecipeStep>? steps,
     List<String>? allergies,
     List<RecipeComment>? comments,
-    bool? isFavorite,
     NutritionInfo? nutritionInfo,
     String? difficulty,
     List<String>? tags,
@@ -77,7 +76,6 @@ class Recipe {
       steps: steps ?? this.steps,
       allergies: allergies ?? this.allergies,
       comments: comments ?? this.comments,
-      isFavorite: isFavorite ?? this.isFavorite,
       nutritionInfo: nutritionInfo ?? this.nutritionInfo,
       difficulty: difficulty ?? this.difficulty,
       tags: tags ?? this.tags,

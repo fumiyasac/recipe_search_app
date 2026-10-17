@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../models/recipe.dart';
 import '../viewmodels/providers.dart';
@@ -9,8 +10,33 @@ class RecipeDetailScreen extends HookConsumerWidget {
 
   const RecipeDetailScreen({super.key, required this.recipe});
 
+  // お気に入りの切替。判定は DB の現在状態で行い、処理中は二重実行を防ぎ、
+  // 失敗は SnackBar で通知する。
+  Future<void> _toggleFavorite(
+    BuildContext context,
+    WidgetRef ref,
+    ValueNotifier<bool> busy,
+  ) async {
+    if (busy.value) return;
+    busy.value = true;
+    try {
+      await ref.read(recipeRepositoryProvider).toggleFavorite(recipe);
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('お気に入りの更新に失敗しました')));
+      }
+    } finally {
+      if (context.mounted) busy.value = false;
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isFavorite = ref.watch(recipeFavoriteStatusProvider(recipe.id));
+    final isToggling = useState(false);
+
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -40,41 +66,22 @@ class RecipeDetailScreen extends HookConsumerWidget {
               ),
             ),
             actions: [
-              Consumer(
-                builder: (context, watch, child) {
-                  final isFavoriteAsync = ref.watch(
-                    recipeFavoriteStatusProvider(recipe.id),
-                  );
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.15),
-                            blurRadius: 12,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.15),
+                        blurRadius: 12,
+                        offset: const Offset(0, 2),
                       ),
-                      child: isFavoriteAsync.when(
-                        data: (isFavorite) => IconButton(
-                          icon: Icon(
-                            isFavorite ? Icons.favorite : Icons.favorite_border,
-                            color: isFavorite
-                                ? const Color(0xFFFF6B35)
-                                : const Color(0xFF1A1A1A),
-                          ),
-                          onPressed: () async {
-                            await ref
-                                .read(favoriteRecipesProvider.notifier)
-                                .toggleFavorite(recipe);
-                            ref.invalidate(recipeListProvider);
-                          },
-                        ),
-                        loading: () => const Padding(
+                    ],
+                  ),
+                  child: isToggling.value
+                      ? const Padding(
                           padding: EdgeInsets.all(12.0),
                           child: SizedBox(
                             width: 24,
@@ -86,27 +93,18 @@ class RecipeDetailScreen extends HookConsumerWidget {
                               ),
                             ),
                           ),
-                        ),
-                        error: (error, stack) => IconButton(
+                        )
+                      : IconButton(
                           icon: Icon(
-                            recipe.isFavorite
-                                ? Icons.favorite
-                                : Icons.favorite_border,
-                            color: recipe.isFavorite
+                            isFavorite ? Icons.favorite : Icons.favorite_border,
+                            color: isFavorite
                                 ? const Color(0xFFFF6B35)
                                 : const Color(0xFF1A1A1A),
                           ),
-                          onPressed: () async {
-                            await ref
-                                .read(favoriteRecipesProvider.notifier)
-                                .toggleFavorite(recipe);
-                            ref.invalidate(recipeListProvider);
-                          },
+                          onPressed: () =>
+                              _toggleFavorite(context, ref, isToggling),
                         ),
-                      ),
-                    ),
-                  );
-                },
+                ),
               ),
             ],
             flexibleSpace: FlexibleSpaceBar(

@@ -8,7 +8,9 @@ class FavoritesScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final favoritesAsync = ref.watch(favoriteRecipesProvider);
+    // お気に入り一覧は favoriteIds（唯一の情報源）から導出。
+    // 読み込み/エラーは favoriteIds の AsyncValue を使う。
+    final idsAsync = ref.watch(favoriteIdsProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -28,8 +30,9 @@ class FavoritesScreen extends HookConsumerWidget {
           ],
         ),
       ),
-      body: favoritesAsync.when(
-        data: (favorites) {
+      body: idsAsync.when(
+        data: (_) {
+          final favorites = ref.watch(favoriteRecipesProvider);
           if (favorites.isEmpty) {
             return Center(
               child: Column(

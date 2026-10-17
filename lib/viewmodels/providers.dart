@@ -38,14 +38,12 @@ RecipeRepository recipeRepository(Ref ref) {
   return RecipeRepository(database);
 }
 
-// これ以降の Provider は既定の autoDispose のままにする。
-// - RecipeList / FilteredRecipes / FavoriteRecipes: 画面が参照する一時的な
-//   表示状態。画面が消えたら破棄し、次回表示時に作り直すのが自然。
-// - MonthlyRecipes(year, month) / RecipeFavoriteStatus(recipeId): family。
-//   autoDispose にして引数ごとのキャッシュが無制限に増えるのを防ぐ。
-// - RecipeFilterState / SelectedCategory / SearchQuery / SelectedTabIndex:
-//   UI 状態。MainNavigationScreen の IndexedStack が常時 listen するため
-//   実質セッション中保持され、保持すべき長寿命ネイティブリソースでもない。
+// keepAlive: appDatabase / recipeRepository（リソース）と favoriteIds
+//   （お気に入り状態の唯一の情報源。常駐させて全画面で共有する）。
+// autoDispose（既定）: 以下は画面に紐づく一時状態・導出値。
+// - RecipeList / FilteredRecipes / favoriteRecipes: 表示用の一覧。
+// - recipeFavoriteStatus(recipeId) / MonthlyRecipes(year, month): family。
+// - RecipeFilterState / SelectedCategory / SearchQuery / SelectedTabIndex: UI 状態。
 
 // 全レシピプロバイダー
 @riverpod
@@ -81,44 +79,23 @@ class FilteredRecipes extends _$FilteredRecipes {
   }
 }
 
-// お気に入りレシピプロバイダー
+// ── お気に入り状態の唯一の情報源（Single Source of Truth）──
+//
+// drift の watch() を keepAlive な Stream Provider として公開する。
+// お気に入りに関する状態（詳細のハート・一覧のハート・お気に入りタブ）は
+// すべてここから導出し、手作業の ref.invalidate は一切行わない。
+// DB が変わるたびに Stream が新しい id 集合を流し、派生 Provider が自動更新される。
+@Riverpod(keepAlive: true)
+Stream<Set<String>> favoriteIds(Ref ref) {
+  return ref.watch(recipeRepositoryProvider).watchFavoriteIds();
+}
+
+// お気に入りレシピ一覧（favoriteIds から導出）
 @riverpod
-class FavoriteRecipes extends _$FavoriteRecipes {
-  @override
-  Future<List<Recipe>> build() async {
-    final repository = ref.watch(recipeRepositoryProvider);
-    return await repository.getFavoriteRecipes();
-  }
-
-  Future<void> toggleFavorite(Recipe recipe) async {
-    final repository = ref.read(recipeRepositoryProvider);
-
-    if (recipe.isFavorite) {
-      await repository.removeFromFavorites(recipe.id);
-    } else {
-      await repository.addToFavorites(recipe);
-    }
-
-    // レシピリストを更新
-    ref.invalidate(recipeListProvider);
-
-    // お気に入り状態プロバイダーを更新
-    ref.invalidate(recipeFavoriteStatusProvider(recipe.id));
-
-    // お気に入りリストを更新
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
-      return await repository.getFavoriteRecipes();
-    });
-  }
-
-  Future<void> refresh() async {
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
-      final repository = ref.read(recipeRepositoryProvider);
-      return await repository.getFavoriteRecipes();
-    });
-  }
+List<Recipe> favoriteRecipes(Ref ref) {
+  final ids = ref.watch(favoriteIdsProvider).value ?? const <String>{};
+  final recipes = ref.watch(recipeRepositoryProvider).allRecipes();
+  return recipes.where((r) => ids.contains(r.id)).toList();
 }
 
 // フィルタ状態プロバイダー（新規）
@@ -240,22 +217,12 @@ class MonthlyRecipes extends _$MonthlyRecipes {
   }
 }
 
-// 特定レシピのお気に入り状態プロバイダー
+// 特定レシピのお気に入り状態（favoriteIds から導出）。
+// 画面のハートはこの Provider だけを見る。読み込み中は false を返す。
 @riverpod
-class RecipeFavoriteStatus extends _$RecipeFavoriteStatus {
-  @override
-  Future<bool> build(String recipeId) async {
-    final repository = ref.watch(recipeRepositoryProvider);
-    return await repository.isFavorite(recipeId);
-  }
-
-  Future<void> refresh() async {
-    state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() async {
-      final repository = ref.read(recipeRepositoryProvider);
-      return await repository.isFavorite(recipeId);
-    });
-  }
+bool recipeFavoriteStatus(Ref ref, String recipeId) {
+  final ids = ref.watch(favoriteIdsProvider).value ?? const <String>{};
+  return ids.contains(recipeId);
 }
 
 // 選択中のタブインデックスプロバイダー

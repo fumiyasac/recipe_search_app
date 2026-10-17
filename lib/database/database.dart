@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import '../models/recipe.dart';
 
 part 'database.g.dart';
 
@@ -36,6 +38,62 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   int get schemaVersion => 1;
+
+  // お気に入り id 集合の Stream（Single Source of Truth）。
+  // テーブルが変わるたびに最新の id 集合を流す。
+  Stream<Set<String>> watchFavoriteIds() {
+    return select(
+      favoriteRecipes,
+    ).watch().map((rows) => rows.map((r) => r.id).toSet());
+  }
+
+  // DB の現在状態に基づいて、トランザクション内で追加／削除を切り替える。
+  // 呼び出し側のスナップショット（recipe.isFavorite）には依存しない。
+  Future<void> toggleFavorite(Recipe recipe) async {
+    await transaction(() async {
+      final existing = await (select(
+        favoriteRecipes,
+      )..where((t) => t.id.equals(recipe.id))).getSingleOrNull();
+      if (existing != null) {
+        await (delete(
+          favoriteRecipes,
+        )..where((t) => t.id.equals(recipe.id))).go();
+      } else {
+        await into(favoriteRecipes).insert(_companionFor(recipe));
+      }
+    });
+  }
+
+  // Recipe を保存用の Companion に変換する。
+  FavoriteRecipesCompanion _companionFor(Recipe recipe) {
+    return FavoriteRecipesCompanion(
+      id: Value(recipe.id),
+      title: Value(recipe.title),
+      description: Value(recipe.description),
+      imageUrl: Value(recipe.imageUrl),
+      category: Value(recipe.category),
+      prepTime: Value(recipe.prepTime),
+      cookTime: Value(recipe.cookTime),
+      servings: Value(recipe.servings),
+      calories: Value(recipe.calories),
+      rating: Value(recipe.rating),
+      ingredients: Value(jsonEncode(recipe.ingredients)),
+      steps: Value(
+        jsonEncode(
+          recipe.steps
+              .map(
+                (s) => {
+                  'stepNumber': s.stepNumber,
+                  'description': s.description,
+                },
+              )
+              .toList(),
+        ),
+      ),
+      allergies: Value(jsonEncode(recipe.allergies)),
+      savedAt: Value(DateTime.now()),
+    );
+  }
 
   // お気に入りレシピを取得
   Future<List<FavoriteRecipe>> getAllFavorites() async {

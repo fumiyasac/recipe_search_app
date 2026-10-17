@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../models/recipe.dart';
 import '../viewmodels/providers.dart';
@@ -9,8 +10,34 @@ class RecipeCard extends HookConsumerWidget {
 
   const RecipeCard({super.key, required this.recipe});
 
+  // お気に入りの切替。判定は DB の現在状態（toggleFavorite 内）で行い、
+  // ここでは保存に必要な recipe を渡すだけ。処理中は二重実行を防ぎ、失敗は SnackBar で通知。
+  Future<void> _toggleFavorite(
+    BuildContext context,
+    WidgetRef ref,
+    ValueNotifier<bool> busy,
+  ) async {
+    if (busy.value) return;
+    busy.value = true;
+    try {
+      await ref.read(recipeRepositoryProvider).toggleFavorite(recipe);
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('お気に入りの更新に失敗しました')));
+      }
+    } finally {
+      if (context.mounted) busy.value = false;
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // お気に入り状態は favoriteIds から導出した recipeFavoriteStatusProvider だけを見る。
+    final isFavorite = ref.watch(recipeFavoriteStatusProvider(recipe.id));
+    final isToggling = useState(false);
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -55,45 +82,27 @@ class RecipeCard extends HookConsumerWidget {
                       ),
                     ),
                   ),
-                  // お気に入りボタン
+                  // お気に入りボタン（recipeFavoriteStatusProvider から導出）
                   Positioned(
                     top: 12,
                     right: 12,
-                    child: Consumer(
-                      builder: (context, watch, child) {
-                        final isFavoriteAsync = ref.watch(
-                          recipeFavoriteStatusProvider(recipe.id),
-                        );
-                        return GestureDetector(
-                          onTap: () async {
-                            await ref
-                                .read(favoriteRecipesProvider.notifier)
-                                .toggleFavorite(recipe);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.15),
-                                  blurRadius: 12,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
+                    child: GestureDetector(
+                      onTap: () => _toggleFavorite(context, ref, isToggling),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.15),
+                              blurRadius: 12,
+                              offset: const Offset(0, 2),
                             ),
-                            child: isFavoriteAsync.when(
-                              data: (isFavorite) => Icon(
-                                isFavorite
-                                    ? Icons.favorite
-                                    : Icons.favorite_border,
-                                color: isFavorite
-                                    ? const Color(0xFFFF6B35)
-                                    : const Color(0xFF6A6A6A),
-                                size: 20,
-                              ),
-                              loading: () => const SizedBox(
+                          ],
+                        ),
+                        child: isToggling.value
+                            ? const SizedBox(
                                 width: 20,
                                 height: 20,
                                 child: CircularProgressIndicator(
@@ -102,20 +111,17 @@ class RecipeCard extends HookConsumerWidget {
                                     Color(0xFFFF6B35),
                                   ),
                                 ),
-                              ),
-                              error: (error, stack) => Icon(
-                                recipe.isFavorite
+                              )
+                            : Icon(
+                                isFavorite
                                     ? Icons.favorite
                                     : Icons.favorite_border,
-                                color: recipe.isFavorite
+                                color: isFavorite
                                     ? const Color(0xFFFF6B35)
                                     : const Color(0xFF6A6A6A),
                                 size: 20,
                               ),
-                            ),
-                          ),
-                        );
-                      },
+                      ),
                     ),
                   ),
                   // カテゴリタグ

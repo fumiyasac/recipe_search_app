@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'package:drift/drift.dart' as drift;
 import '../models/recipe.dart';
 import '../database/database.dart';
 
@@ -764,19 +762,12 @@ class RecipeRepository {
     ];
   }
 
-  // 全レシピを取得
-  Future<List<Recipe>> getAllRecipes() async {
-    final recipes = _getAllRecipes();
-    final favoriteIds = await _database.getAllFavorites();
-    final favoriteIdSet = favoriteIds.map((f) => f.id).toSet();
+  // レシピのマスタ（お気に入り状態は持たない）。同期版。
+  List<Recipe> allRecipes() => _getAllRecipes();
 
-    return recipes
-        .map(
-          (recipe) =>
-              recipe.copyWith(isFavorite: favoriteIdSet.contains(recipe.id)),
-        )
-        .toList();
-  }
+  // 全レシピを取得。お気に入り状態は favoriteIdsProvider から導出するため、
+  // ここでは付与しない。
+  Future<List<Recipe>> getAllRecipes() async => _getAllRecipes();
 
   // カテゴリでフィルタ
   Future<List<Recipe>> getRecipesByCategory(String category) async {
@@ -796,56 +787,14 @@ class RecipeRepository {
     }).toList();
   }
 
-  // お気に入りレシピを取得
-  Future<List<Recipe>> getFavoriteRecipes() async {
-    final favorites = await _database.getAllFavorites();
-    final allRecipes = _getAllRecipes();
+  // お気に入り id 集合の Stream（Single Source of Truth）
+  Stream<Set<String>> watchFavoriteIds() => _database.watchFavoriteIds();
 
-    return allRecipes
-        .where((recipe) => favorites.any((f) => f.id == recipe.id))
-        .map((recipe) => recipe.copyWith(isFavorite: true))
-        .toList();
-  }
+  // DB の現在状態に基づいて追加／削除を切り替える（スナップショット非依存）
+  Future<void> toggleFavorite(Recipe recipe) =>
+      _database.toggleFavorite(recipe);
 
-  // お気に入りに追加
-  Future<void> addToFavorites(Recipe recipe) async {
-    await _database.addFavorite(
-      FavoriteRecipesCompanion(
-        id: drift.Value(recipe.id),
-        title: drift.Value(recipe.title),
-        description: drift.Value(recipe.description),
-        imageUrl: drift.Value(recipe.imageUrl),
-        category: drift.Value(recipe.category),
-        prepTime: drift.Value(recipe.prepTime),
-        cookTime: drift.Value(recipe.cookTime),
-        servings: drift.Value(recipe.servings),
-        calories: drift.Value(recipe.calories),
-        rating: drift.Value(recipe.rating),
-        ingredients: drift.Value(jsonEncode(recipe.ingredients)),
-        steps: drift.Value(
-          jsonEncode(
-            recipe.steps
-                .map(
-                  (s) => {
-                    'stepNumber': s.stepNumber,
-                    'description': s.description,
-                  },
-                )
-                .toList(),
-          ),
-        ),
-        allergies: drift.Value(jsonEncode(recipe.allergies)),
-        savedAt: drift.Value(DateTime.now()),
-      ),
-    );
-  }
-
-  // お気に入りから削除
-  Future<void> removeFromFavorites(String recipeId) async {
-    await _database.removeFavorite(recipeId);
-  }
-
-  // お気に入りチェック
+  // お気に入りチェック（単発。表示の反応は favoriteIds（watch）で行う）
   Future<bool> isFavorite(String recipeId) async {
     return await _database.isFavorite(recipeId);
   }

@@ -2,12 +2,11 @@ import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:recipe_search_app/database/database.dart';
+import 'package:recipe_search_app/models/recipe.dart';
 import 'package:recipe_search_app/viewmodels/providers.dart';
 
-// FavoriteRecipes Provider（AsyncNotifier）のテスト。
-//
-// appDatabaseProvider をインメモリ DB（NativeDatabase.memory()）で差し替え、
-// 実ファイルに触れずに drift を介したお気に入りの永続化を検証する。
+// お気に入り状態の Single Source of Truth（favoriteIdsProvider）と、そこから
+// 導出される favoriteRecipes / recipeFavoriteStatus の整合をインメモリ DB で検証する。
 void main() {
   late AppDatabase db;
   late ProviderContainer container;
@@ -17,6 +16,9 @@ void main() {
     container = ProviderContainer(
       overrides: [appDatabaseProvider.overrideWithValue(db)],
     );
+    // 唯一の情報源 favoriteIds の watch Stream を起動して保持する
+    final sub = container.listen(favoriteIdsProvider, (_, _) {});
+    addTearDown(sub.close);
   });
 
   tearDown(() async {
@@ -24,43 +26,48 @@ void main() {
     await db.close();
   });
 
-  test('初期状態ではお気に入りは空', () async {
-    final favorites = await container.read(favoriteRecipesProvider.future);
-    expect(favorites, isEmpty);
+  Future<Recipe> firstRecipe() async =>
+      (await container.read(filteredRecipesProvider.future)).first;
+
+  test('初期状態はすべて未お気に入り', () async {
+    await container.read(favoriteIdsProvider.future);
+    final target = await firstRecipe();
+
+    expect(container.read(favoriteIdsProvider).value, isEmpty);
+    expect(container.read(favoriteRecipesProvider), isEmpty);
+    expect(container.read(recipeFavoriteStatusProvider(target.id)), isFalse);
   });
 
-  test('toggleFavorite でお気に入りが永続化される', () async {
-    // リポジトリの既存レシピ（id は _getAllRecipes の値と一致する必要がある）
-    final repository = container.read(recipeRepositoryProvider);
-    final recipes = await repository.getAllRecipes();
-    final target = recipes.first;
-    expect(target.isFavorite, isFalse);
+  test(
+    'toggle で favoriteIds・favoriteRecipes・recipeFavoriteStatus が一括更新される',
+    () async {
+      final target = await firstRecipe();
 
-    await container
-        .read(favoriteRecipesProvider.notifier)
-        .toggleFavorite(target);
+      await container.read(recipeRepositoryProvider).toggleFavorite(target);
+      await pumpEventQueue();
 
-    final favorites = await container.read(favoriteRecipesProvider.future);
-    expect(favorites.map((r) => r.id), contains(target.id));
-    expect(favorites.every((r) => r.isFavorite), isTrue);
+      // 同じ favoriteIds から導出されるので、すべて即座に反映される
+      expect(container.read(favoriteIdsProvider).value, contains(target.id));
+      expect(container.read(favoriteRecipesProvider).map((r) => r.id), [
+        target.id,
+      ]);
+      expect(container.read(recipeFavoriteStatusProvider(target.id)), isTrue);
+      expect(await db.isFavorite(target.id), isTrue);
+    },
+  );
 
-    // DB にも保存されていること
-    expect(await db.isFavorite(target.id), isTrue);
-  });
+  test('再 toggle ですべて未お気に入りに戻る', () async {
+    final target = await firstRecipe();
+    final repo = container.read(recipeRepositoryProvider);
 
-  test('toggleFavorite を 2 回呼ぶとお気に入りから外れる', () async {
-    final repository = container.read(recipeRepositoryProvider);
-    final recipes = await repository.getAllRecipes();
-    final target = recipes.first;
+    await repo.toggleFavorite(target);
+    await pumpEventQueue();
+    await repo.toggleFavorite(target);
+    await pumpEventQueue();
 
-    final notifier = container.read(favoriteRecipesProvider.notifier);
-    await notifier.toggleFavorite(target);
-    // 追加後の状態を反映した Recipe で再度トグル
-    final added = (await container.read(favoriteRecipesProvider.future)).first;
-    await notifier.toggleFavorite(added);
-
-    final favorites = await container.read(favoriteRecipesProvider.future);
-    expect(favorites, isEmpty);
+    expect(container.read(favoriteIdsProvider).value, isEmpty);
+    expect(container.read(favoriteRecipesProvider), isEmpty);
+    expect(container.read(recipeFavoriteStatusProvider(target.id)), isFalse);
     expect(await db.isFavorite(target.id), isFalse);
   });
 }

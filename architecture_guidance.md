@@ -78,21 +78,24 @@ graph TD
 
 - **関数プロバイダー**: `appDatabase` / `recipeRepository`（インスタンスを提供）。DB は長寿命リソースのため **`@Riverpod(keepAlive: true)`** とし、`appDatabase` は `ref.onDispose(db.close)` で破棄時に接続を閉じる。それ以外の Provider は既定の autoDispose。
 - **同期 Notifier**: `RecipeFilterState`（`FilterState`）、`SelectedCategory`、`SearchQuery`、`SelectedTabIndex`
-- **非同期 AsyncNotifier（`Future` を `build`）**: `RecipeList`、`FilteredRecipes`、`FavoriteRecipes`、`MonthlyRecipes`（family: year, month）、`RecipeFavoriteStatus`（family: recipeId）
+- **非同期 AsyncNotifier（`Future` を `build`）**: `RecipeList`、`FilteredRecipes`、`MonthlyRecipes`（family: year, month）
+- **お気に入り（Single Source of Truth）**: `favoriteIds`（`@Riverpod(keepAlive: true)` の **Stream Provider**。drift の `watchFavoriteIds()` を購読）が唯一の情報源。`favoriteRecipes`（一覧）と `recipeFavoriteStatus(recipeId)`（bool）は**ここから導出**する。追加/削除は `RecipeRepository.toggleFavorite(recipe)`（DB の現在状態をトランザクションで判定）に一本化し、手作業の `ref.invalidate` は行わない。
 - `FilteredRecipes.build()` は複合フィルタを自前で持たず、純粋関数 `applyFilters`（`lib/models/recipe_filter.dart`）に委譲する（テスト容易性のため）。
 - UI 側は `HookConsumerWidget` で `ref.watch` し、`useState` / `useTextEditingController` などの Hooks でローカル状態を扱う。
 
 ```mermaid
 graph TD
-  appDatabase[appDatabaseProvider<br/>AppDatabase]
-  repo[recipeRepositoryProvider<br/>RecipeRepository]
+  appDatabase[appDatabaseProvider<br/>AppDatabase · keepAlive]
+  repo[recipeRepositoryProvider<br/>keepAlive]
   filterState[recipeFilterStateProvider<br/>Notifier FilterState]
 
-  list[recipeListProvider<br/>AsyncNotifier]
-  filtered[filteredRecipesProvider<br/>AsyncNotifier]
-  fav[favoriteRecipesProvider<br/>AsyncNotifier]
+  list[recipeListProvider]
+  filtered[filteredRecipesProvider]
   monthly["monthlyRecipesProvider(year, month)"]
-  favStatus["recipeFavoriteStatusProvider(recipeId)"]
+
+  favIds["favoriteIdsProvider<br/>Stream Set&lt;id&gt; · keepAlive · 唯一の情報源"]
+  favRecipes[favoriteRecipesProvider<br/>導出]
+  favStatus["recipeFavoriteStatusProvider(recipeId)<br/>導出 bool"]
 
   category[selectedCategoryProvider]
   query[searchQueryProvider]
@@ -102,17 +105,41 @@ graph TD
   list --> repo
   filtered --> repo
   filtered --> filterState
-  fav --> repo
   monthly --> repo
-  favStatus --> repo
+  favIds --> repo
+  favRecipes --> favIds
+  favStatus --> favIds
   category --> filterState
   query --> filterState
-
-  fav -. invalidate .-> list
-  fav -. invalidate .-> favStatus
 ```
 
-> `FavoriteRecipes.toggleFavorite()` は、お気に入りの追加／削除後に `recipeListProvider` と該当 `recipeFavoriteStatusProvider(id)` を `invalidate` し、自身の `state` を再構築することで画面間の整合性を保ちます。
+> お気に入りは `favoriteIds`（drift の `watch()`）を唯一の情報源にし、`favoriteRecipes` と `recipeFavoriteStatus(id)` はそこから導出します。トグルは `RecipeRepository.toggleFavorite()` が DB の現在状態をトランザクションで判定して追加／削除するだけで、テーブルの変化を `watch()` が拾って派生 Provider を自動更新するため、**手作業の `invalidate` は不要**です。
+
+### お気に入り: 修正前 → 修正後のデータフロー
+
+```mermaid
+flowchart TD
+  subgraph B["修正前（不具合）"]
+    b1[ハートをタップ] --> b2["toggleFavorite(recipe)"]
+    b2 --> b3{"recipe.isFavorite?<br/>古いスナップショット"}
+    b3 -->|常に false| b4["addFavorite（insert）"]
+    b4 --> b5["2 回目は主キー重複で例外<br/>＝解除できない"]
+    b2 -. 手作業 .-> b6[invalidate recipeList]
+    b2 -. 手作業 .-> b7[invalidate favoriteStatus]
+    b8["filteredRecipes は invalidate 対象外<br/>→ 一覧の isFavorite が古いまま"]
+  end
+```
+
+```mermaid
+flowchart TD
+  subgraph A["修正後（Single Source of Truth）"]
+    a1[ハートをタップ] --> a2["repo.toggleFavorite(recipe)"]
+    a2 --> a3["transaction: DB の現在状態で<br/>add / remove を判定"]
+    a3 --> a4["drift select().watch()"]
+    a4 --> a5[favoriteIdsProvider 更新]
+    a5 --> a6["recipeFavoriteStatus / favoriteRecipes<br/>が自動で最新化（invalidate 不要）"]
+  end
+```
 
 ---
 

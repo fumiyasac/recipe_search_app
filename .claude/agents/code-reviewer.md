@@ -49,6 +49,28 @@ tools: Read, Grep, Glob, Bash
   Future<List<Recipe>> build() async =>
       applyFilters(await repo.getAll(), ref.watch(filterProvider));
   ```
+- **状態の Single Source of Truth（最重要）**: 永続データ（drift など）に連動する状態は、情報源を 1 つにする。次の 3 点を確認する。
+  1. **スナップショットの状態値で分岐していないか**: モデルのスナップショットが持つ状態フラグ（例 `recipe.isFavorite`）を見て追加/削除などを分岐していないか。スナップショットは古くなり得るため、判定は**その場で現在の状態を取得して**行う（DB の状態、または唯一の情報源 Provider）。
+  2. **同じ状態の情報源が複数ないか**: 同じ事実（お気に入りか否か）を複数の Provider／フィールドが別々に持ち、`ref.invalidate` を手作業で連鎖させて辻褄合わせしていないか。手書きの invalidate 連鎖は情報源分散のサイン。
+  3. **drift は watch() で購読しているか**: drift のデータを `Future` + 手動 `invalidate` で同期していないか。テーブルの変化は `select(...).watch()` の Stream Provider で購読し、派生状態は**そこから導出**する（自動で最新化され、invalidate が不要になる）。
+
+  ```dart
+  // NG: スナップショットの isFavorite で分岐＋複数情報源＋手作業 invalidate
+  Future<void> toggle(Recipe r) async {
+    if (r.isFavorite) { await repo.remove(r.id); } else { await repo.add(r); } // 古いと二重追加で例外
+    ref.invalidate(listProvider);
+    ref.invalidate(favoriteStatusProvider(r.id)); // 情報源が分散している証拠
+  }
+
+  // OK: drift watch() を唯一の情報源にし、判定は DB 状態、派生は導出
+  @Riverpod(keepAlive: true)
+  Stream<Set<String>> favoriteIds(Ref ref) => ref.watch(repoProvider).watchFavoriteIds();
+  @riverpod
+  bool recipeFavoriteStatus(Ref ref, String id) =>
+      ref.watch(favoriteIdsProvider).value?.contains(id) ?? false;
+  // toggle は DB の現在状態で判定（トランザクション）。手作業 invalidate は不要。
+  ```
+
 - **build 内での副作用**: `build()`（Notifier/AsyncNotifier）内で `ref.read(...).notifier.xxx()` による状態変更、ナビゲーション、`state=` の直接代入などを行っていないか。build は純粋に初期状態を返すだけにする。
 - **ref.read と ref.watch の誤用**: 依存の購読は `ref.watch`、ユーザー操作に対する一回限りの読み出しは `ref.read`。`build`/widget build 内で `ref.read` を使って依存更新を取りこぼしていないか、コールバック内で `ref.watch` して不要な再実行を招いていないか。
 - **invalidate の整合**: 状態変更後に関連 Provider（例: 一覧と詳細）の `invalidate` を適切に行っているか。過剰 invalidate で無駄な再取得をしていないか。

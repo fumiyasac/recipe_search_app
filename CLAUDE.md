@@ -88,6 +88,7 @@ MVVM + Repository パターンを `lib/` 配下のレイヤーフォルダで表
 - 新しい画面・部品は `View = HookConsumerWidget` の既存慣習に合わせる。副作用・ローカル状態は `flutter_hooks`（`useState` / `useTextEditingController` 等）で扱う。
 - ファイル名は `snake_case`、クラス名は `PascalCase`。ファイルは責務に応じたレイヤーフォルダ（models / database / repositories / viewmodels / views / widgets）に配置する。
 - DB アクセスは `RecipeRepository` 経由に統一する（View / Provider から `AppDatabase` を直接叩かない）。
+- **お気に入り状態は `favoriteIdsProvider`（drift の `watch()`）を唯一の情報源（Single Source of Truth）とする。** 画面のハート・一覧・お気に入りタブはすべてここから導出し、`recipe.isFavorite` のようなスナップショットで追加/削除を分岐しない。状態をつなぐための手作業の `ref.invalidate` を書かない（Stream が自動で派生を更新する）。追加/削除の判定は DB の現在状態で行う。
 
 ### Don't
 

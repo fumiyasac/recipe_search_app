@@ -43,11 +43,17 @@ void main() {
   testWidgets('レシピ詳細が主要情報を表示する', (tester) async {
     await provideMockNetworkImages(() async {
       final db = AppDatabase.forTesting(NativeDatabase.memory());
-      addTearDown(db.close);
+      final container = ProviderContainer(
+        overrides: [appDatabaseProvider.overrideWithValue(db)],
+      );
+      addTearDown(() async {
+        container.dispose();
+        await db.close();
+      });
 
       await tester.pumpWidget(
-        ProviderScope(
-          overrides: [appDatabaseProvider.overrideWithValue(db)],
+        UncontrolledProviderScope(
+          container: container,
           child: MaterialApp(home: RecipeDetailScreen(recipe: _sampleRecipe())),
         ),
       );

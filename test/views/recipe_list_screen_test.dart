@@ -12,11 +12,19 @@ void main() {
   testWidgets('検索フィールドに入力すると一覧が絞り込まれる', (tester) async {
     await provideMockNetworkImages(() async {
       final db = AppDatabase.forTesting(NativeDatabase.memory());
-      addTearDown(db.close);
+      // drift の watch() を含む Provider を確実に破棄するため、コンテナを明示管理し
+      // teardown で dispose する（ProviderScope の内部破棄だと保留中タイマーが残る）。
+      final container = ProviderContainer(
+        overrides: [appDatabaseProvider.overrideWithValue(db)],
+      );
+      addTearDown(() async {
+        container.dispose();
+        await db.close();
+      });
 
       await tester.pumpWidget(
-        ProviderScope(
-          overrides: [appDatabaseProvider.overrideWithValue(db)],
+        UncontrolledProviderScope(
+          container: container,
           child: const MaterialApp(home: RecipeListScreen()),
         ),
       );
@@ -40,11 +48,19 @@ void main() {
   testWidgets('該当しない検索語では空状態が表示される', (tester) async {
     await provideMockNetworkImages(() async {
       final db = AppDatabase.forTesting(NativeDatabase.memory());
-      addTearDown(db.close);
+      // drift の watch() を含む Provider を確実に破棄するため、コンテナを明示管理し
+      // teardown で dispose する（ProviderScope の内部破棄だと保留中タイマーが残る）。
+      final container = ProviderContainer(
+        overrides: [appDatabaseProvider.overrideWithValue(db)],
+      );
+      addTearDown(() async {
+        container.dispose();
+        await db.close();
+      });
 
       await tester.pumpWidget(
-        ProviderScope(
-          overrides: [appDatabaseProvider.overrideWithValue(db)],
+        UncontrolledProviderScope(
+          container: container,
           child: const MaterialApp(home: RecipeListScreen()),
         ),
       );

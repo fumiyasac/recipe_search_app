@@ -29,15 +29,13 @@ void main() {
   });
 
   group('Recipe.copyWith', () {
-    test('isFavorite のみ変更し、他フィールドは保持する', () {
+    test('一部フィールドのみ変更し、他フィールドは保持する', () {
       final recipe = buildRecipe();
-      final favorited = recipe.copyWith(isFavorite: true);
+      final updated = recipe.copyWith(title: '新タイトル');
 
-      expect(favorited.isFavorite, isTrue);
-      expect(recipe.isFavorite, isFalse);
-      expect(favorited.id, recipe.id);
-      expect(favorited.title, recipe.title);
-      expect(favorited.totalTime, recipe.totalTime);
+      expect(updated.title, '新タイトル');
+      expect(updated.id, recipe.id);
+      expect(updated.totalTime, recipe.totalTime);
     });
 
     test('指定しなければ元の値を維持する', () {
@@ -51,9 +49,9 @@ void main() {
   });
 
   group('Recipe のデフォルト値', () {
-    test('isFavorite は既定で false、difficulty は medium', () {
+    // お気に入り状態は Recipe が持たない（favoriteIds が唯一の情報源）。
+    test('difficulty は medium、tags / cookingTools は空', () {
       final recipe = buildRecipe();
-      expect(recipe.isFavorite, isFalse);
       expect(recipe.difficulty, 'medium');
       expect(recipe.tags, isEmpty);
       expect(recipe.cookingTools, isEmpty);

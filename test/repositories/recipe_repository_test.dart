@@ -18,22 +18,14 @@ void main() {
     await db.close();
   });
 
-  group('getAllRecipes', () {
-    test('マスタの全 16 件を返し、初期は全て未お気に入り', () async {
+  group('getAllRecipes / allRecipes', () {
+    test('マスタの全 16 件を返す（お気に入り状態は持たない）', () async {
       final all = await repository.getAllRecipes();
       expect(all, hasLength(16));
-      expect(all.every((r) => r.isFavorite == false), isTrue);
     });
 
-    test('お気に入り登録済みの recipe は isFavorite=true になる', () async {
-      final target = (await repository.getAllRecipes()).first;
-      await repository.addToFavorites(target);
-
-      final all = await repository.getAllRecipes();
-      final updated = all.firstWhere((r) => r.id == target.id);
-      expect(updated.isFavorite, isTrue);
-      // 他は未お気に入りのまま
-      expect(all.where((r) => r.isFavorite).map((r) => r.id), [target.id]);
+    test('allRecipes() も同じ 16 件を返す（同期版）', () {
+      expect(repository.allRecipes(), hasLength(16));
     });
   });
 
@@ -88,19 +80,34 @@ void main() {
     });
   });
 
-  group('お気に入りの追加・削除', () {
-    test('add → getFavoriteRecipes → remove の往復', () async {
+  group('toggleFavorite / watchFavoriteIds', () {
+    test('toggle で登録→解除が切り替わり、DB 状態で判定する', () async {
       final target = (await repository.getAllRecipes()).first;
 
-      await repository.addToFavorites(target);
+      await repository.toggleFavorite(target);
       expect(await repository.isFavorite(target.id), isTrue);
-      final favs = await repository.getFavoriteRecipes();
-      expect(favs.map((r) => r.id), [target.id]);
-      expect(favs.single.isFavorite, isTrue);
 
-      await repository.removeFromFavorites(target.id);
+      // 同じスナップショットを渡しても DB 状態で判定するので解除になる
+      await repository.toggleFavorite(target);
       expect(await repository.isFavorite(target.id), isFalse);
-      expect(await repository.getFavoriteRecipes(), isEmpty);
+    });
+
+    test('watchFavoriteIds は追加・削除のたびに新しい id 集合を流す', () async {
+      final target = (await repository.getAllRecipes()).first;
+      final emissions = <Set<String>>[];
+      final sub = repository.watchFavoriteIds().listen(emissions.add);
+      addTearDown(sub.cancel);
+
+      await pumpEventQueue();
+      await repository.toggleFavorite(target); // 追加
+      await pumpEventQueue();
+      await repository.toggleFavorite(target); // 削除
+      await pumpEventQueue();
+
+      // 初期(空) → {target} → 空 の順で流れる
+      expect(emissions.first, isEmpty);
+      expect(emissions.any((s) => s.contains(target.id)), isTrue);
+      expect(emissions.last, isEmpty);
     });
   });
 }

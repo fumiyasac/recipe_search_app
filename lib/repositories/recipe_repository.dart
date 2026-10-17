@@ -796,6 +796,13 @@ class RecipeRepository {
     }).toList();
   }
 
+  // お気に入り id 集合の Stream（Single Source of Truth）
+  Stream<Set<String>> watchFavoriteIds() => _database.watchFavoriteIds();
+
+  // DB の現在状態に基づいて追加／削除を切り替える（スナップショット非依存）
+  Future<void> toggleFavorite(Recipe recipe) =>
+      _database.toggleFavorite(recipe);
+
   // お気に入りレシピを取得
   Future<List<Recipe>> getFavoriteRecipes() async {
     final favorites = await _database.getAllFavorites();

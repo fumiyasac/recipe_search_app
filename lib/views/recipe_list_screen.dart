@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../viewmodels/providers.dart';
 import '../widgets/recipe_card.dart';
+import '../widgets/recipe_hero_image.dart';
 import '../widgets/filter_section.dart';
 
 class RecipeListScreen extends HookConsumerWidget {
@@ -72,7 +73,10 @@ class RecipeListScreen extends HookConsumerWidget {
                     mainAxisSpacing: 16,
                   ),
                   delegate: SliverChildBuilderDelegate((context, index) {
-                    return RecipeCard(recipe: recipes[index]);
+                    return RecipeCard(
+                      recipe: recipes[index],
+                      heroSource: HeroSource.home,
+                    );
                   }, childCount: recipes.length),
                 ),
               );

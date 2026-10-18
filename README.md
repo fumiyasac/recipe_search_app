@@ -202,7 +202,7 @@ flutter test
 flutter test --coverage
 ```
 
-テストは役割ごとにディレクトリを分けています（計 13 ファイル / 67 ケース）。
+テストは役割ごとにディレクトリを分けています（計 15 ファイル / 79 ケース。うちゴールデン 1 件は macOS でのみ実行し、CI/ubuntu では skip）。
 
 | ディレクトリ | 内容 |
 |--------------|------|
@@ -210,7 +210,8 @@ flutter test --coverage
 | `test/repositories/` | `RecipeRepository` の検索系（`searchRecipes` / `getRecipesByCategory` / `getRecipeById`）をインメモリ drift で検証（100%） |
 | `test/viewmodels/` | Provider のテスト（お気に入りの Single Source of Truth と解除不具合の回帰、`AppDatabase` が dispose 時に close されること） |
 | `test/migration/` | 旧バージョンで作成した DB を開ける互換性テスト（drift/sqlite3 更新時の回帰防止） |
-| `test/views/` `test/widgets/` | レシピ一覧の検索・絞り込み、詳細フィルタシート、レシピ詳細、栄養グラフの Widget テスト |
+| `test/views/` `test/widgets/` | レシピ一覧の検索・絞り込み、詳細フィルタシート、レシピ詳細、栄養グラフ、Hero 遷移（3 遷移元・戻り・視差軽減・画像失敗）の Widget テスト |
+| `test/golden/` | Hero 遷移 0〜100% のゴールデン（macOS で生成・比較、CI は skip） |
 | `test/support/` | `NetworkImage` を差し替えるテストヘルパー（非テスト） |
 
 中核の絞り込み・検索ロジック（`applyFilters` / `RecipeRepository`）はカバレッジ 100%です。

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../viewmodels/providers.dart';
 import '../widgets/recipe_card.dart';
+import '../widgets/recipe_hero_image.dart';
 
 class FavoritesScreen extends HookConsumerWidget {
   const FavoritesScreen({super.key});
@@ -76,7 +77,10 @@ class FavoritesScreen extends HookConsumerWidget {
             ),
             itemCount: favorites.length,
             itemBuilder: (context, index) {
-              return RecipeCard(recipe: favorites[index]);
+              return RecipeCard(
+                recipe: favorites[index],
+                heroSource: HeroSource.favorites,
+              );
             },
           );
         },

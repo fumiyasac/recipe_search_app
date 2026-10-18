@@ -177,7 +177,16 @@ erDiagram
 
 ## 5. 画面遷移
 
-ボトムナビゲーション（3 タブ）を `IndexedStack` で保持し、詳細画面へは `Navigator.push`（`MaterialPageRoute`）で遷移します。名前付きルーティング（go_router 等）は未導入です。
+ボトムナビゲーション（3 タブ）を `IndexedStack` で保持します。詳細画面へは複数の遷移元
+（ホーム一覧・お気に入り・カレンダー）から遷移でき、**遷移処理は 1 箇所に集約**しています。
+名前付きルーティング（go_router 等）は未導入です。
+
+- **遷移ヘルパー**: `RecipeDetailScreen.route(context, recipe, source, {tagKey})` に集約。
+  `MaterialPageRoute` を生成し、「視差効果を減らす」設定時は遷移時間ゼロにする。
+- **Hero**: 画像は共通部品 `RecipeHeroImage`（Hero で包むのは画像だけ）で表示する。
+  タグは `RecipeHeroTag.image(id, source, key)` で生成し、遷移元（home/favorites/calendar）
+  と識別子を含めて一意化する（IndexedStack の複数タブ／同一画面の重複を防ぐ）。
+  詳細の情報カードは Hero の外でフェード表示し、`flightShuttleBuilder` で角丸を補間する。
 
 ```mermaid
 graph TD
@@ -185,15 +194,17 @@ graph TD
   List[RecipeListScreen<br/>ホーム]
   Fav[FavoritesScreen<br/>お気に入り]
   Cal[CalendarScreen<br/>カレンダー]
+  Route["RecipeDetailScreen.route()<br/>遷移処理を集約・Hero 画像"]
   Detail[RecipeDetailScreen]
   Sheet[AdvancedFilterSheet<br/>ModalBottomSheet]
 
   Main --> List
   Main --> Fav
   Main --> Cal
-  List -->|RecipeCard タップ| Detail
-  Fav -->|RecipeCard タップ| Detail
-  Cal -->|日付のレシピ選択| Detail
+  List -->|"RecipeCard（source: home）"| Route
+  Fav -->|"RecipeCard（source: favorites）"| Route
+  Cal -->|"カード/一覧（source: calendar, tagKey）"| Route
+  Route -->|Hero 画像でつながる| Detail
   List -->|FilterSection の絞り込み| Sheet
 ```
 

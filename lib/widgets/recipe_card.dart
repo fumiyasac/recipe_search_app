@@ -4,11 +4,19 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../models/recipe.dart';
 import '../viewmodels/providers.dart';
 import '../views/recipe_detail_screen.dart';
+import 'recipe_hero_image.dart';
 
 class RecipeCard extends HookConsumerWidget {
   final Recipe recipe;
 
-  const RecipeCard({super.key, required this.recipe});
+  /// Hero タグに含める遷移元（ホーム/お気に入りでタグが重複しないようにする）。
+  final HeroSource heroSource;
+
+  const RecipeCard({
+    super.key,
+    required this.recipe,
+    this.heroSource = HeroSource.home,
+  });
 
   // お気に入りの切替。判定は DB の現在状態（toggleFavorite 内）で行い、
   // ここでは保存に必要な recipe を渡すだけ。処理中は二重実行を防ぎ、失敗は SnackBar で通知。
@@ -40,12 +48,9 @@ class RecipeCard extends HookConsumerWidget {
 
     return GestureDetector(
       onTap: () {
-        Navigator.push(
+        Navigator.of(
           context,
-          MaterialPageRoute(
-            builder: (context) => RecipeDetailScreen(recipe: recipe),
-          ),
-        );
+        ).push(RecipeDetailScreen.route(context, recipe, heroSource));
       },
       child: Container(
         decoration: BoxDecoration(
@@ -66,20 +71,15 @@ class RecipeCard extends HookConsumerWidget {
             Expanded(
               flex: 3,
               child: Stack(
+                fit: StackFit.expand,
                 children: [
-                  // Hero Animation用の画像
-                  Hero(
-                    tag: 'recipe-${recipe.id}',
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(16),
-                        ),
-                        image: DecorationImage(
-                          image: NetworkImage(recipe.imageUrl),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                  // Hero 画像（共通部品。遷移元/先で同じ構造・同じ ImageProvider）
+                  RecipeHeroImage(
+                    recipeId: recipe.id,
+                    imageUrl: recipe.imageUrl,
+                    source: heroSource,
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(16),
                     ),
                   ),
                   // お気に入りボタン（recipeFavoriteStatusProvider から導出）

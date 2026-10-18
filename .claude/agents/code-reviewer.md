@@ -82,6 +82,25 @@ tools: Read, Grep, Glob, Bash
 - **スキーマ変更の安全性**: テーブル変更時に `schemaVersion` インクリメントと `MigrationStrategy.onUpgrade` があるか（無ければ重大指摘）。
 - **リソース管理**: DB を `close()` しているか。テスト・一時利用の DB だけでなく、**本番で DB を生成する Provider**（`appDatabaseProvider` など）も対象。Provider の場合は上記「リソースを保持する Provider のライフサイクル」（keepAlive + `ref.onDispose(db.close)`）で必ず確認する。
 
+## Hero / 画面遷移 チェックリスト
+
+- **遷移元と遷移先で Hero の child 構造を揃える**: 同じ tag の Hero は、遷移元と遷移先で中身の構造を大きく変えない（片方が画像だけ、もう片方が画像＋情報カードだと遷移中に押しつぶされる）。Hero で包むのは画像など**同形の要素だけ**にする。
+  ```dart
+  // NG: 遷移先だけ情報カード（テキスト）まで Hero に含める
+  Hero(tag: t, child: Stack(children: [Image(...), InfoCardWithText(...)]))
+  // OK: 遷移元/先とも画像だけを包む。テキストは Hero の外でフェード表示
+  Hero(tag: t, child: RecipeHeroImage(...))
+  ```
+- **Hero 内のテキストは Material で包む**: どうしても Hero 内にテキストを置く場合、`flightShuttleBuilder` の描画を `Material(type: MaterialType.transparency)` で包む（包まないと遷移中に黄色い二重下線が出る）。原則はテキストを Hero の外に出すこと。
+- **tag は文字列直書きしない / ルート上で重複させない**: タグはヘルパー（例 `RecipeHeroTag.image(id, source, key)`）で生成する。`'recipe-$id'` のような直書きは、IndexedStack で複数タブが同時に存在する場合や同一画面に同じ要素が複数並ぶ場合に重複し、`There are multiple heroes that share the same tag` で落ちる。遷移元（home/favorites/calendar）や識別子を tag に含めて一意にする。
+  ```dart
+  // NG: 遷移元に関係なく同じタグ → IndexedStack の別タブと重複
+  Hero(tag: 'recipe-${recipe.id}', ...)
+  // OK: 遷移元を含めて一意化
+  Hero(tag: RecipeHeroTag.image(recipe.id, HeroSource.home), ...)
+  ```
+- **同じ画面への遷移元で Hero の有無を揃える**: ある画面（例: 詳細）へ複数箇所（一覧カード・カレンダー等）から遷移できるなら、**すべての遷移元**で Hero を用意する（片方だけ Hero だと遷移元で挙動が変わる）。共通の遷移部品（例 `RecipeHeroImage`）と遷移ヘルパー（例 `RecipeDetailScreen.route`）を全箇所で使う。
+
 ## 出力フォーマット
 
 重大度順（Critical / Warning / Nits）に、箇条書きで。各項目に file:line と修正方針を添える。

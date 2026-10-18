@@ -85,3 +85,36 @@ rm docs/screenshots/demo.mp4
 - 尺（`-t`）を短くする。
 - パレット最適化: `ffmpeg -i in.mp4 -vf "fps=12,scale=320:-1:flags=lanczos,palettegen" palette.png` →
   `ffmpeg -i in.mp4 -i palette.png -lavfi "fps=12,scale=320:-1:flags=lanczos[x];[x][1:v]paletteuse" -t 10 demo.gif`
+
+## Hero 遷移のデモ（修正後）
+
+一覧 → 詳細 の Hero 遷移をスロー再生で録画する手順。`timeDilation` を上げてゆっくり再生し、
+修正後の「画像だけが滑らかに飛び、情報カードが後からフェードイン・角丸が補間される」様子を見せる。
+
+1. スロー再生: `lib/main.dart` の `runApp` 前に一時的に以下を追加（撮影後は戻す）。
+   ```dart
+   import 'package:flutter/scheduler.dart';
+   // ...
+   timeDilation = 6.0; // 6倍スロー
+   ```
+2. iOS シミュレータで録画して GIF 化（`ffmpeg` が必要）。
+   ```bash
+   xcrun simctl io booted recordVideo --codec h264 docs/screenshots/hero_demo.mov
+   # 一覧でレシピをタップ → 詳細へ → 戻る、を実演してから Ctrl-C
+   ffmpeg -i docs/screenshots/hero_demo.mov -t 10 -vf "fps=15,scale=320:-1:flags=lanczos" \
+     -loop 0 docs/screenshots/hero_demo.gif
+   rm docs/screenshots/hero_demo.mov
+   ```
+3. README の該当箇所に `docs/screenshots/hero_demo.gif` を掲載する。
+
+> 本 PR の環境には `ffmpeg` が無いため GIF は未同梱。上記手順で生成すると README に表示される。
+
+## ゴールデンテストの運用方針
+
+- Hero 遷移のゴールデン（`test/golden/`）は **macOS（ローカル）でのみ生成・比較**する。
+  CI は ubuntu で動作し、フォントのアンチエイリアス差で厳密一致しないため、テスト側で
+  `skip: !Platform.isMacOS` により CI では skip する。
+- 生成: `flutter test --update-goldens --tags golden`
+- 比較: `flutter test --tags golden`（macOS）
+- テキストは flutter_test の既定フォント（字形が矩形）で描画されるため、遷移中の
+  レイアウト崩れ（情報カードの押しつぶし）や黄色下線の有無を安定して検出できる。

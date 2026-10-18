@@ -3,7 +3,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../viewmodels/providers.dart';
+import '../widgets/recipe_hero_image.dart';
 import 'recipe_detail_screen.dart';
+
+// 同一画面でタグが重複しないよう、日付から Hero タグ用のキーを作る。
+String _dateKey(DateTime d) => '${d.year}-${d.month}-${d.day}';
 
 class CalendarScreen extends HookConsumerWidget {
   const CalendarScreen({super.key});
@@ -149,6 +153,11 @@ class CalendarScreen extends HookConsumerWidget {
                         const SizedBox(height: 16),
                         _buildRecipeCard(
                           context,
+                          DateTime(
+                            selectedDay.value.year,
+                            selectedDay.value.month,
+                            selectedDay.value.day,
+                          ),
                           monthlyRecipes[DateTime(
                             selectedDay.value.year,
                             selectedDay.value.month,
@@ -234,13 +243,16 @@ class CalendarScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _buildRecipeCard(BuildContext context, recipe) {
+  Widget _buildRecipeCard(BuildContext context, DateTime date, recipe) {
+    final tagKey = 'featured-${_dateKey(date)}';
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => RecipeDetailScreen(recipe: recipe),
+        Navigator.of(context).push(
+          RecipeDetailScreen.route(
+            context,
+            recipe,
+            HeroSource.calendar,
+            tagKey: tagKey,
           ),
         );
       },
@@ -259,16 +271,18 @@ class CalendarScreen extends HookConsumerWidget {
         ),
         child: Row(
           children: [
-            // 背景画像
-            ClipRRect(
-              borderRadius: const BorderRadius.horizontal(
-                left: Radius.circular(16),
-              ),
-              child: Image.network(
-                recipe.imageUrl,
-                width: 160,
-                height: double.infinity,
-                fit: BoxFit.cover,
+            // 背景画像（共通の Hero 部品）
+            SizedBox(
+              width: 160,
+              height: double.infinity,
+              child: RecipeHeroImage(
+                recipeId: recipe.id,
+                imageUrl: recipe.imageUrl,
+                source: HeroSource.calendar,
+                tagKey: tagKey,
+                borderRadius: const BorderRadius.horizontal(
+                  left: Radius.circular(16),
+                ),
               ),
             ),
             // 情報
@@ -356,12 +370,15 @@ class CalendarScreen extends HookConsumerWidget {
   }
 
   Widget _buildRecipeListItem(BuildContext context, DateTime date, recipe) {
+    final tagKey = 'list-${_dateKey(date)}';
     return GestureDetector(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => RecipeDetailScreen(recipe: recipe),
+        Navigator.of(context).push(
+          RecipeDetailScreen.route(
+            context,
+            recipe,
+            HeroSource.calendar,
+            tagKey: tagKey,
           ),
         );
       },
@@ -405,15 +422,15 @@ class CalendarScreen extends HookConsumerWidget {
               ),
             ),
             const SizedBox(width: 16),
-            // レシピ画像
-            ClipRRect(
+            // レシピ画像（共通の Hero 部品）
+            RecipeHeroImage(
+              recipeId: recipe.id,
+              imageUrl: recipe.imageUrl,
+              source: HeroSource.calendar,
+              tagKey: tagKey,
               borderRadius: BorderRadius.circular(10),
-              child: Image.network(
-                recipe.imageUrl,
-                width: 60,
-                height: 60,
-                fit: BoxFit.cover,
-              ),
+              width: 60,
+              height: 60,
             ),
             const SizedBox(width: 12),
             // レシピ情報

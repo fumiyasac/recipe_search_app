@@ -4,11 +4,46 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../models/recipe.dart';
 import '../viewmodels/providers.dart';
 import '../widgets/nutrition_chart.dart';
+import '../widgets/recipe_hero_image.dart';
 
 class RecipeDetailScreen extends HookConsumerWidget {
   final Recipe recipe;
+  final HeroSource heroSource;
 
-  const RecipeDetailScreen({super.key, required this.recipe});
+  /// 遷移元の Hero タグ識別子（カレンダーの選択日カード/一覧の区別など）。
+  final String? heroTagKey;
+
+  const RecipeDetailScreen({
+    super.key,
+    required this.recipe,
+    this.heroSource = HeroSource.home,
+    this.heroTagKey,
+  });
+
+  /// 詳細画面への遷移を 1 箇所にまとめるヘルパー。
+  /// 「視差効果を減らす」設定が ON のときは遷移を無しにする（Hero も HeroMode で無効化）。
+  static Route<void> route(
+    BuildContext context,
+    Recipe recipe,
+    HeroSource source, {
+    String? tagKey,
+  }) {
+    final reduceMotion =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    final page = RecipeDetailScreen(
+      recipe: recipe,
+      heroSource: source,
+      heroTagKey: tagKey,
+    );
+    if (reduceMotion) {
+      return PageRouteBuilder<void>(
+        transitionDuration: Duration.zero,
+        reverseTransitionDuration: Duration.zero,
+        pageBuilder: (_, _, _) => page,
+      );
+    }
+    return MaterialPageRoute<void>(builder: (_) => page);
+  }
 
   // お気に入りの切替。判定は DB の現在状態で行い、処理中は二重実行を防ぎ、
   // 失敗は SnackBar で通知する。
@@ -37,8 +72,23 @@ class RecipeDetailScreen extends HookConsumerWidget {
     final isFavorite = ref.watch(recipeFavoriteStatusProvider(recipe.id));
     final isToggling = useState(false);
 
+    // F 対応: SliverAppBar が縮んだら Hero を無効化し、戻りの遷移を自然にする。
+    final scrollController = useScrollController();
+    final collapsed = useState(false);
+    useEffect(() {
+      void listener() {
+        final isCollapsed =
+            scrollController.hasClients && scrollController.offset > 250;
+        if (isCollapsed != collapsed.value) collapsed.value = isCollapsed;
+      }
+
+      scrollController.addListener(listener);
+      return () => scrollController.removeListener(listener);
+    }, [scrollController]);
+
     return Scaffold(
       body: CustomScrollView(
+        controller: scrollController,
         slivers: [
           // Hero画像とAppBar
           SliverAppBar(
@@ -108,68 +158,28 @@ class RecipeDetailScreen extends HookConsumerWidget {
               ),
             ],
             flexibleSpace: FlexibleSpaceBar(
-              background: Hero(
-                tag: 'recipe-${recipe.id}',
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Image.network(recipe.imageUrl, fit: BoxFit.cover),
-                    Positioned(
-                      bottom: 20,
-                      left: 20,
-                      right: 20,
-                      child: Container(
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.15),
-                              blurRadius: 20,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 14,
-                                vertical: 7,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFFF6B35),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                recipe.category,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: 0.3,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              recipe.title,
-                              style: const TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xFF1A1A1A),
-                                letterSpacing: -0.5,
-                                height: 1.2,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  // Hero で包むのは画像だけ（情報カードは含めない）
+                  RecipeHeroImage(
+                    recipeId: recipe.id,
+                    imageUrl: recipe.imageUrl,
+                    source: heroSource,
+                    tagKey: heroTagKey,
+                    heroEnabled: !collapsed.value,
+                  ),
+                  // 情報カードは Hero の外。遷移の後半でフェード＋スライド表示する。
+                  Positioned(
+                    bottom: 20,
+                    left: 20,
+                    right: 20,
+                    child: _InfoCard(
+                      category: recipe.category,
+                      title: recipe.title,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -791,5 +801,84 @@ class RecipeDetailScreen extends HookConsumerWidget {
     } else {
       return Icons.kitchen;
     }
+  }
+}
+
+/// 詳細画面のタイトル情報カード。Hero の外に置き、ルートの遷移アニメーションに
+/// 合わせて後半でフェード＋スライドイン（戻りはフェードアウト）する。
+class _InfoCard extends StatelessWidget {
+  final String category;
+  final String title;
+
+  const _InfoCard({required this.category, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    final animation =
+        ModalRoute.of(context)?.animation ?? kAlwaysCompleteAnimation;
+    return AnimatedBuilder(
+      animation: animation,
+      builder: (context, child) {
+        // 遷移の後半（0.4〜1.0）でフェード＋少し上へスライド
+        final t = const Interval(
+          0.4,
+          1.0,
+          curve: Curves.easeOut,
+        ).transform(animation.value);
+        return Opacity(
+          opacity: t.clamp(0.0, 1.0),
+          child: Transform.translate(
+            offset: Offset(0, (1 - t) * 16),
+            child: child,
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.15),
+              blurRadius: 20,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFF6B35),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                category,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.3,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF1A1A1A),
+                letterSpacing: -0.5,
+                height: 1.2,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

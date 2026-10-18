@@ -89,6 +89,7 @@ MVVM + Repository パターンを `lib/` 配下のレイヤーフォルダで表
 - ファイル名は `snake_case`、クラス名は `PascalCase`。ファイルは責務に応じたレイヤーフォルダ（models / database / repositories / viewmodels / views / widgets）に配置する。
 - DB アクセスは `RecipeRepository` 経由に統一する（View / Provider から `AppDatabase` を直接叩かない）。
 - **お気に入り状態は `favoriteIdsProvider`（drift の `watch()`）を唯一の情報源（Single Source of Truth）とする。** 画面のハート・一覧・お気に入りタブはすべてここから導出し、`recipe.isFavorite` のようなスナップショットで追加/削除を分岐しない。状態をつなぐための手作業の `ref.invalidate` を書かない（Stream が自動で派生を更新する）。追加/削除の判定は DB の現在状態で行う。
+- **詳細画面への Hero 遷移は共通部品とヘルパーを使う。** 画像は `RecipeHeroImage`（Hero で包むのは画像だけ）、タグは `RecipeHeroTag.image(id, source, key)` で生成（文字列直書き・重複禁止）、遷移は `RecipeDetailScreen.route(context, recipe, source, tagKey)` に集約する。遷移元（一覧・お気に入り・カレンダー）すべてで同じ部品を使い、Hero の有無・構造を揃える。
 
 ### Don't
 

@@ -1,0 +1,4 @@
+tags:
+  golden:
+    # Hero 遷移のゴールデンテスト。macOS（ローカル）でのみ実行し、CI(ubuntu) では
+    # フォント差のため skip する（test 側で skip: !Platform.isMacOS）。

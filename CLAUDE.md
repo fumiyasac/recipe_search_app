@@ -17,7 +17,7 @@
 | 状態管理（コード生成） | riverpod_annotation / riverpod_generator | ^4.0.0 / ^4.0.0+1 |
 | 状態管理（Hooks 連携） | hooks_riverpod / flutter_hooks | ^3.1.0 / ^0.21.3+1 |
 | ローカル DB | drift / drift_dev | ^2.16.0 |
-| SQLite ランタイム | sqlite3_flutter_libs | ^0.5.20 |
+| SQLite ランタイム | sqlite3_flutter_libs | ^0.6.0（EOL マーカー。実ランタイムは sqlite3 v3.x が提供） |
 | パス解決 | path_provider / path | ^2.1.2 / ^1.9.0 |
 | カレンダー UI | table_calendar | ^3.3.0 |
 | グラフ UI | fl_chart | ^1.2.0 |

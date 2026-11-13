@@ -28,7 +28,8 @@
 | [#6](https://github.com/fumiyasac/recipe_search_app/pull/6) | ショーケース品質化（Provider ライフサイクル修正 / フィルタ切り出し＋テスト拡充 / code-reviewer 改善 / 画面キャプチャ / ドキュメント整合） |
 | [#7](https://github.com/fumiyasac/recipe_search_app/pull/7) | お気に入り状態を drift watch() の Single Source of Truth に再設計 |
 | [#8](https://github.com/fumiyasac/recipe_search_app/pull/8) | Hero 遷移の不整合（A〜F）を共通部品で解消 |
-| [#9](https://github.com/fumiyasac/recipe_search_app/pull/9) | Flutter 3.50.0 と依存パッケージの更新 ※本 PR |
+| [#9](https://github.com/fumiyasac/recipe_search_app/pull/9) | Flutter 3.50.0 と依存パッケージの更新 |
+| [#10](https://github.com/fumiyasac/recipe_search_app/pull/10) | sqlite3_flutter_libs を 0.6.0+eol（EOL マーカー）へ更新 ※本 PR |
 
 ## 主な機能
 

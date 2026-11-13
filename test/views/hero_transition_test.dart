@@ -268,6 +268,16 @@ void main() {
   });
 
   testWidgets('カレンダーから遷移すると calendar タグの Hero で接続する', (tester) async {
+    // Flutter 3.50 以降、モックネットワーク画像の 1x1 PNG デコードに失敗したときの
+    // `Codec failed to produce an image` がテスト失敗として浮上する。遷移の検証とは
+    // 無関係なので吸収する（他の golden テストと同じ扱い）。
+    final originalOnError = FlutterError.onError;
+    FlutterError.onError = (details) {
+      if (details.exception.toString().contains('Codec failed')) return;
+      originalOnError?.call(details);
+    };
+    addTearDown(() => FlutterError.onError = originalOnError);
+
     await provideMockNetworkImages(() async {
       final (container, db) = makeContainer();
       addTearDown(() async {

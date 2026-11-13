@@ -12,7 +12,7 @@
 
 | 分類 | 使用技術 | バージョン（pubspec.yaml） |
 |------|----------|---------------------------|
-| SDK | Flutter / Dart | Flutter 3.47.7 / Dart 3.13.x（`environment.sdk: ^3.10.4`） |
+| SDK | Flutter / Dart | Flutter 3.50.0 / Dart 3.14.x（`environment.sdk: ^3.10.4`） |
 | 状態管理 | flutter_riverpod | ^3.1.0 |
 | 状態管理（コード生成） | riverpod_annotation / riverpod_generator | ^4.0.0 / ^4.0.0+1 |
 | 状態管理（Hooks 連携） | hooks_riverpod / flutter_hooks | ^3.1.0 / ^0.21.3+1 |
@@ -28,7 +28,7 @@
 ## セットアップ
 
 ```bash
-# ツールバージョンの導入（mise 利用時。.mise.toml で Flutter 3.47.7 を固定）
+# ツールバージョンの導入（mise 利用時。.mise.toml で Flutter 3.50.0 を固定）
 mise install
 # Git フックの有効化（初回のみ。コミット時に dart format を自動実行）
 sh scripts/setup-hooks.sh

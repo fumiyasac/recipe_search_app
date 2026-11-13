@@ -25,7 +25,10 @@
 | [#3](https://github.com/fumiyasac/recipe_search_app/pull/3) | Claude Code の Skill / Subagent を追加（[skill_guidance.md](./skill_guidance.md)） |
 | [#4](https://github.com/fumiyasac/recipe_search_app/pull/4) | Flutter 3.47.7 と依存パッケージを安全に更新 |
 | [#5](https://github.com/fumiyasac/recipe_search_app/pull/5) | スクリーンショット掲載とネイティブビルド差分の取り込み |
-| [#6](https://github.com/fumiyasac/recipe_search_app/pull/6) | ショーケース品質化（Provider ライフサイクル修正 / フィルタ切り出し＋テスト拡充 / code-reviewer 改善 / 画面キャプチャ / ドキュメント整合）※本 PR |
+| [#6](https://github.com/fumiyasac/recipe_search_app/pull/6) | ショーケース品質化（Provider ライフサイクル修正 / フィルタ切り出し＋テスト拡充 / code-reviewer 改善 / 画面キャプチャ / ドキュメント整合） |
+| [#7](https://github.com/fumiyasac/recipe_search_app/pull/7) | お気に入り状態を drift watch() の Single Source of Truth に再設計 |
+| [#8](https://github.com/fumiyasac/recipe_search_app/pull/8) | Hero 遷移の不整合（A〜F）を共通部品で解消 |
+| [#9](https://github.com/fumiyasac/recipe_search_app/pull/9) | Flutter 3.50.0 と依存パッケージの更新 ※本 PR |
 
 ## 主な機能
 
@@ -56,7 +59,7 @@
 
 | ツール | バージョン | 確認コマンド |
 |--------|-----------|--------------|
-| Flutter | 3.47.7（`.mise.toml`で固定） | `flutter --version` |
+| Flutter | 3.50.0（`.mise.toml`で固定） | `flutter --version` |
 | Dart | 3.13.x（pubspecの`sdk: ^3.10.4`を満たすこと） | `dart --version` |
 | iOS開発 | Xcode（Macのみ） | `xcodebuild -version` |
 | Android開発 | Android Studio / Android SDK | — |
@@ -66,7 +69,7 @@
 
 ### miseによるツールバージョン管理（任意・推奨）
 
-`.mise.toml`でFlutterのバージョン（3.47.7）を固定しています。[mise](https://mise.jdx.dev/)を導入すると、チーム・CIと同一バージョンのFlutterを自動で用意できます。
+`.mise.toml`でFlutterのバージョン（3.50.0）を固定しています。[mise](https://mise.jdx.dev/)を導入すると、チーム・CIと同一バージョンのFlutterを自動で用意できます。
 
 ```bash
 # mise のインストール（macOS / Homebrew の例）
@@ -78,7 +81,7 @@ echo 'eval "$(mise activate zsh)"' >> ~/.zshrc
 mise install
 ```
 
-miseを使わない場合も、Flutter 3.47.7（stable）を手動で用意すれば動作します。
+miseを使わない場合も、Flutter 3.50.0（stable）を手動で用意すれば動作します。
 
 ## クイックスタート
 
@@ -87,7 +90,7 @@ miseを使わない場合も、Flutter 3.47.7（stable）を手動で用意す�
 git clone git@github.com:fumiyasac/recipe_search_app.git
 cd recipe_search_app
 
-# 2. ツールバージョンを導入（mise 利用時。未使用なら Flutter 3.47.7 を手動で用意）
+# 2. ツールバージョンを導入（mise 利用時。未使用なら Flutter 3.50.0 を手動で用意）
 mise install
 
 # 3. Git フックを有効化（コミット時に dart format を自動実行）
